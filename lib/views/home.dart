@@ -1,4 +1,6 @@
 import 'package:ecommerce/views/login.dart';
+import 'package:ecommerce/views/screens/about_screen.dart';
+import 'package:ecommerce/views/screens/contact_us_screen.dart';
 import 'package:ecommerce/views/screens/home_screen.dart';
 import 'package:ecommerce/widgets/bottom_nav_bar.dart' show CustomBottomNavBar;
 import 'package:flutter/material.dart';
@@ -16,9 +18,9 @@ class _HomeScreenState extends State<Home> {
 
   final _pages = [
     HomeScreen(),
-    Center(child: Text("About Page")),
+    AboutScreen(),
     Center(child: Text("Cart Page")),
-    Center(child: Text("Contact Us Page")),
+    // ServicesScreen(),
     // Add more pages as needed
     
   ];
@@ -44,4 +46,5 @@ class _HomeScreenState extends State<Home> {
       ),
     );
   }
+
 }
