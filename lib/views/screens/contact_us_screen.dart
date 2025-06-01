@@ -42,7 +42,7 @@ class ContactHeroBanner extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.grey.shade100,
             image: const DecorationImage(
-              image: AssetImage('assets/images/contact_hero.jpg'), // Your hero image
+              image: AssetImage('assets/images/hero_watchContact.jpg'), // Your hero image
               fit: BoxFit.cover,
             ),
           ),
@@ -239,7 +239,7 @@ class MapPreviewSection extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(14),
         child: Image.asset(
-          'assets/images/map_preview.jpg', // Use your own map preview
+          'assets/images/preview_map.png', // Use your own map preview
           height: 140,
           width: double.infinity,
           fit: BoxFit.cover,
