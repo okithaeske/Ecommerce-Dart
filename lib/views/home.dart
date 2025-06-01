@@ -21,7 +21,7 @@ class _HomeScreenState extends State<Home> {
     HomeScreen(),
     AboutScreen(),
     ProductScreen(),
-    // ServicesScreen(),
+    ContactUsScreen(),
     // Add more pages as needed
     
   ];
