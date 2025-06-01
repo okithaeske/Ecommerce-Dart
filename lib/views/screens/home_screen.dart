@@ -204,6 +204,7 @@ class _WatchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 140,
+      color: Colors.white,
       margin: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
         children: [

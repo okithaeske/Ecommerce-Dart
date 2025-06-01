@@ -2,6 +2,7 @@ import 'package:ecommerce/views/login.dart';
 import 'package:ecommerce/views/screens/about_screen.dart';
 import 'package:ecommerce/views/screens/contact_us_screen.dart';
 import 'package:ecommerce/views/screens/home_screen.dart';
+import 'package:ecommerce/views/screens/product_screen.dart';
 import 'package:ecommerce/widgets/bottom_nav_bar.dart' show CustomBottomNavBar;
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,7 @@ class _HomeScreenState extends State<Home> {
   final _pages = [
     HomeScreen(),
     AboutScreen(),
-    Center(child: Text("Cart Page")),
+    ProductScreen(),
     // ServicesScreen(),
     // Add more pages as needed
     
