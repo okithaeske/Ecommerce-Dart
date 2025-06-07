@@ -1,133 +1,209 @@
 import 'package:flutter/material.dart';
 
-// Accent color for your brand (premium gold)
-const Color accent = Color(0xFFD1B464);
+const Color accent = Color(0xFFD1B464); // Brand gold
 
 class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            ContactHeroBanner(),
-            ContactFormCard(),
-            ContactSectionDivider(),
-            ContactDetailsSection(),
-            ShopLocationsSection(),
-            MapPreviewSection(),
-            NewsletterSection(),
-          ],
+      backgroundColor: colorScheme.background,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              ContactHeroBanner(),
+              ContactFormCard(),
+              ContactSectionDivider(),
+              ContactDetailsSection(),
+              ShopLocationsSection(),
+              MapPreviewSection(),
+              NewsletterSection(),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// --- Hero Banner Section ---
-class ContactHeroBanner extends StatelessWidget {
+// --- Hero Banner Section with slight fade-in animation ---
+class ContactHeroBanner extends StatefulWidget {
   const ContactHeroBanner({super.key});
+
+  @override
+  State<ContactHeroBanner> createState() => _ContactHeroBannerState();
+}
+
+class _ContactHeroBannerState extends State<ContactHeroBanner> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 850));
+    _fadeAnim = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          width: double.infinity,
-          height: 210,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade100,
-            image: const DecorationImage(
-              image: AssetImage('assets/images/hero_watchContact.jpg'), // Your hero image
-              fit: BoxFit.cover,
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Semantics(
+      label: "Contact Us hero banner with luxury watch background",
+      child: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: 210,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceVariant,
+              image: const DecorationImage(
+                image: AssetImage('assets/images/hero_watchContact.jpg'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-        Positioned(
-          left: 24,
-          bottom: 22,
-          child: Text(
-            "Contact Us",
-            style: TextStyle(
-              fontSize: 34,
-              fontWeight: FontWeight.bold,
-              color: accent,
-              shadows: [Shadow(blurRadius: 8, color: Colors.black12)],
+          Positioned(
+            left: 24,
+            bottom: 22,
+            child: FadeTransition(
+              opacity: _fadeAnim,
+              child: Text(
+                "Contact Us",
+                style: TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
+                  color: accent,
+                  shadows: [Shadow(blurRadius: 8, color: Colors.black12)],
+                ),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
-// --- Contact Form Section ---
-class ContactFormCard extends StatelessWidget {
+// --- Contact Form Section with state for the checkbox ---
+class ContactFormCard extends StatefulWidget {
   const ContactFormCard({super.key});
   @override
+  State<ContactFormCard> createState() => _ContactFormCardState();
+}
+
+class _ContactFormCardState extends State<ContactFormCard> {
+  bool _agreed = false;
+
+  @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       child: Card(
         elevation: 5,
+        color: colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("We're Always Here To Assist",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87)),
+              Text(
+                "We're Always Here To Assist",
+                style: textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
               const SizedBox(height: 8),
-              Text("Leave us a message and our team will get back to you soon.", style: TextStyle(color: Colors.grey)),
+              Text(
+                "Leave us a message and our team will get back to you soon.",
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
               const SizedBox(height: 16),
-              // Name
               TextField(
                 decoration: InputDecoration(
                   labelText: "Your Name",
+                  labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.8)),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
               const SizedBox(height: 12),
-              // Email
               TextField(
                 decoration: InputDecoration(
                   labelText: "Your Email",
+                  labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.8)),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 12),
-              // Message
               TextField(
                 maxLines: 4,
                 decoration: InputDecoration(
                   labelText: "Message",
+                  labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.8)),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
               const SizedBox(height: 10),
-              // Checkbox & Button
               Row(
                 children: [
-                  Checkbox(value: false, onChanged: (v) {}),
-                  Expanded(child: Text("I agree with terms & conditions")),
+                  Checkbox(
+                    value: _agreed,
+                    onChanged: (v) => setState(() => _agreed = v ?? false),
+                    activeColor: accent,
+                    side: BorderSide(color: accent),
+                  ),
+                  Expanded(
+                    child: Text(
+                      "I agree with terms & conditions",
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
                 ],
               ),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _agreed
+                      ? () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Message sent!'), duration: Duration(seconds: 2)),
+                          );
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accent,
+                    foregroundColor: Colors.black,
+                    disabledBackgroundColor: accent.withOpacity(0.45),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     padding: const EdgeInsets.symmetric(vertical: 15),
+                    textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  child: Text("Send Message", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  child: const Text("Send Message"),
                 ),
               ),
             ],
@@ -138,14 +214,24 @@ class ContactFormCard extends StatelessWidget {
   }
 }
 
-// --- Section Divider ---
+// --- Section Divider with gold accent ---
 class ContactSectionDivider extends StatelessWidget {
   const ContactSectionDivider({super.key});
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0),
-      child: Divider(thickness: 1.5, color: Colors.grey[300]),
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+      child: Container(
+        width: 48,
+        height: 3,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFe3c77b), Color(0xFFD1B464), Color(0xFFe3c77b)],
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
     );
   }
 }
@@ -155,43 +241,38 @@ class ContactDetailsSection extends StatelessWidget {
   const ContactDetailsSection({super.key});
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
       child: Column(
         children: [
-          Row(
-            children: [
-              Icon(Icons.location_on_outlined, color: accent),
-              const SizedBox(width: 10),
-              Expanded(child: Text("123 Zenatara Avenue, Kandy, Sri Lanka")),
-            ],
-          ),
+          _iconRow(context, Icons.location_on_outlined, "123 Zenatara Avenue, Kandy, Sri Lanka"),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              Icon(Icons.phone, color: accent),
-              const SizedBox(width: 10),
-              Expanded(child: Text("+94 77 123 4567")),
-            ],
-          ),
+          _iconRow(context, Icons.phone, "+94 77 123 4567"),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              Icon(Icons.mail_outline, color: accent),
-              const SizedBox(width: 10),
-              Expanded(child: Text("support@zenatara.com")),
-            ],
-          ),
+          _iconRow(context, Icons.mail_outline, "support@zenatara.com"),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              Icon(Icons.access_time, color: accent),
-              const SizedBox(width: 10),
-              Expanded(child: Text("Mon–Fri: 9:00–18:00 | Sat: 10:00–14:00")),
-            ],
-          ),
+          _iconRow(context, Icons.access_time, "Mon–Fri: 9:00–18:00 | Sat: 10:00–14:00"),
         ],
       ),
+    );
+  }
+
+  Widget _iconRow(BuildContext context, IconData icon, String text) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Row(
+      children: [
+        Icon(icon, color: accent),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            text,
+            style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -201,15 +282,20 @@ class ShopLocationsSection extends StatelessWidget {
   const ShopLocationsSection({super.key});
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Shop Locations", style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: accent)),
+          Text(
+            "Shop Locations",
+            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: accent),
+          ),
           const SizedBox(height: 8),
           Card(
-            color: Colors.grey.shade100,
+            color: colorScheme.surfaceVariant,
             elevation: 0,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Padding(
@@ -218,7 +304,13 @@ class ShopLocationsSection extends StatelessWidget {
                 children: [
                   Icon(Icons.place, color: accent),
                   const SizedBox(width: 8),
-                  Text("Colombo | Kandy | Galle", style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text(
+                    "Colombo | Kandy | Galle",
+                    style: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -229,38 +321,46 @@ class ShopLocationsSection extends StatelessWidget {
   }
 }
 
-// --- Map Preview Section ---
+// --- Map Preview Section with semantics for accessibility ---
 class MapPreviewSection extends StatelessWidget {
   const MapPreviewSection({super.key});
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(14),
-        child: Image.asset(
-          'assets/images/preview_map.png', // Use your own map preview
-          height: 140,
-          width: double.infinity,
-          fit: BoxFit.cover,
+    return Semantics(
+      label: "Preview of our shop locations on a map",
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: Image.asset(
+            'assets/images/preview_map.png',
+            height: 140,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
   }
 }
 
-// --- Newsletter / Footer Section (Optional) ---
+// --- Newsletter / Footer Section ---
 class NewsletterSection extends StatelessWidget {
   const NewsletterSection({super.key});
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
       child: Column(
         children: [
           Text(
             "Subscribe to our newsletter for updates & offers!",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
+            style: textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onBackground,
+            ),
           ),
           const SizedBox(height: 8),
           Row(
@@ -269,6 +369,9 @@ class NewsletterSection extends StatelessWidget {
                 child: TextField(
                   decoration: InputDecoration(
                     hintText: "Enter your email",
+                    hintStyle: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.5),
+                    ),
                     contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   ),
@@ -276,13 +379,19 @@ class NewsletterSection extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Subscribed!'), duration: Duration(seconds: 2)),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accent,
+                  foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 18),
                 ),
-                child: Text("Subscribe"),
+                child: const Text("Subscribe"),
               ),
             ],
           ),

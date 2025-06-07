@@ -1,4 +1,7 @@
+import 'package:ecommerce/views/screens/productDetail.dart';
 import 'package:flutter/material.dart';
+
+const Color accent = Color(0xFFD1B464);
 
 class ProductScreen extends StatelessWidget {
   final VoidCallback? onCartTap;
@@ -8,68 +11,72 @@ class ProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
+      backgroundColor: colorScheme.background,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _herobanner(context),
-            _productcard(context),
+            _herobanner(context, colorScheme, textTheme),
+            const _SectionDivider(),
+            _productcard(context, colorScheme, textTheme),
           ],
         ),
       ),
     );
   }
 
-  Widget _herobanner(BuildContext context) {
-    // Responsive height for hero section
+  Widget _herobanner(
+    BuildContext context,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+  ) {
     final screenHeight = MediaQuery.of(context).size.height;
-    final heroHeight = screenHeight * 0.46; // About 46% of the screen height
+    final heroHeight = screenHeight * 0.46;
 
     return Column(
       children: [
-        // --- Top Row: Large Watch + Text, and Vertical Title ---
+        // --- Hero Section ---
         SizedBox(
           height: heroHeight,
           child: Row(
             children: [
-              // Left: Large Watch & Headline (2/3 width)
+              // Left: Main Watch + Text
               Expanded(
                 flex: 2,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // BG Image
                     Image.asset(
-                      'assets/images/hero_watchproduct.jpg', // Your main watch image
+                      'assets/images/hero_watchproduct.jpg',
                       fit: BoxFit.cover,
                     ),
-                    // Dark overlay
-                    Container(color: Colors.black.withOpacity(0.7)),
-                    // Text Overlay
+                    Container(color: Colors.black.withOpacity(0.68)),
                     Padding(
                       padding: const EdgeInsets.all(24.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
                             'Gc\nTECHNOCLASS',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 26, // Slightly smaller for mobile
+                            style: textTheme.headlineSmall?.copyWith(
+                              color: colorScheme.onPrimary,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 2,
                               height: 1.12,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Text(
                             'A statement of Unique Sport-Tech',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                              letterSpacing: 1.2,
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onPrimary.withOpacity(0.83),
+                              fontStyle: FontStyle.italic,
+                              letterSpacing: 1.1,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -80,21 +87,21 @@ class ProductScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              // Right: Vertical Text (1/3 width)
+              // Right: Vertical Tagline
               Expanded(
                 flex: 1,
                 child: Container(
-                  color: Colors.white,
-                  child: const Center(
+                  color: colorScheme.surface,
+                  child: Center(
                     child: RotatedBox(
-                      quarterTurns: 3, // Vertical
+                      quarterTurns: 3,
                       child: Text(
                         'FIND YOUR PERFECT TIMEPIECE',
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 13,
+                        style: textTheme.titleMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.bold,
                           letterSpacing: 2,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -106,8 +113,7 @@ class ProductScreen extends StatelessWidget {
             ],
           ),
         ),
-
-        // --- Bottom Row: Editorial Grid ---
+        // --- Editorial Grid ---
         SizedBox(
           height: 130,
           child: Row(
@@ -124,7 +130,7 @@ class ProductScreen extends StatelessWidget {
                   image: 'assets/images/moments.jpg',
                   title: 'MOMENTS OF SMART LUXURY',
                   subtitle: 'From the Saddle',
-                  colorOverlay: Colors.black.withOpacity(0.25),
+                  colorOverlay: Colors.black.withOpacity(0.22),
                 ),
               ),
               Expanded(
@@ -141,66 +147,68 @@ class ProductScreen extends StatelessWidget {
     );
   }
 
-  Widget _productcard(BuildContext context) {
-    // Example product list
+  Widget _productcard(
+    BuildContext context,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+  ) {
     final products = [
       {
         "name": "Patek Philippe Nautilus 5711",
         "price": "\$3,200,000.00",
-        "image": "assets/images/patek.jpg"
+        "image": "assets/images/patek.jpg",
       },
       {
         "name": "Richard Mille RM 11-03",
         "price": "\$2,300,000.00",
-        "image": "assets/images/richard.jpg"
+        "image": "assets/images/richard.jpg",
       },
       {
         "name": "Vacheron Constantin Overseas",
         "price": "\$1,230,000.00",
-        "image": "assets/images/vacheron.jpg"
+        "image": "assets/images/vacheron.jpg",
       },
       {
         "name": "Jaeger-LeCoultre Reverso",
         "price": "\$3,290,000.00",
-        "image": "assets/images/jaeger.jpg"
+        "image": "assets/images/jaeger.jpg",
       },
       {
         "name": "Hublot Big Bang Unico",
         "price": "\$238,700.00",
-        "image": "assets/images/hublot.jpg"
+        "image": "assets/images/hublot.jpg",
       },
       {
         "name": "Cartier Santos de Cartier",
         "price": "\$1,276,000.00",
-        "image": "assets/images/cartier.jpg"
+        "image": "assets/images/cartier.jpg",
       },
       {
         "name": "IWC Portugieser Chronograph",
         "price": "\$1,120,000.00",
-        "image": "assets/images/iwc.jpg"
+        "image": "assets/images/iwc.jpg",
       },
       {
         "name": "Panerai Luminor Marina",
         "price": "\$895,000.00",
-        "image": "assets/images/panerai.jpg"
+        "image": "assets/images/panerai.jpg",
       },
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // --- Section Title and Cart Button ---
+        // Section title and cart button
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Row(
             children: [
-              const Text(
+              Text(
                 "OUR PRODUCTS",
-                style: TextStyle(
+                style: textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 22,
-                  letterSpacing: 1.2,
-                  color: Color(0xFF17294D), // Deep navy
+                  letterSpacing: 1.3,
+                  color: colorScheme.onBackground,
                 ),
               ),
               const Spacer(),
@@ -209,29 +217,34 @@ class ProductScreen extends StatelessWidget {
                 icon: const Icon(Icons.shopping_cart_outlined, size: 18),
                 label: Text("Cart ($cartCount)"),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
+                  backgroundColor: accent,
+                  foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  elevation: 1,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  textStyle: textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
           ),
         ),
-        // --- Product Grid ---
+        // Product Grid
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 18,
+              crossAxisSpacing: 14,
+              mainAxisSpacing: 22,
               childAspectRatio: 0.68,
             ),
             itemCount: products.length,
@@ -241,16 +254,41 @@ class ProductScreen extends StatelessWidget {
                 name: p['name']!,
                 price: p['price']!,
                 imagePath: p['image']!,
+                colorScheme: colorScheme,
+                textTheme: textTheme,
               );
             },
           ),
         ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 36),
       ],
     );
   }
 }
 
+// --- Gold divider ---
+class _SectionDivider extends StatelessWidget {
+  const _SectionDivider();
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      child: Container(
+        width: 60,
+        height: 3,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFe3c77b), Color(0xFFD1B464), Color(0xFFe3c77b)],
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+}
+
+// -- EditorialTile with themed overlay --
 class _EditorialTile extends StatelessWidget {
   final String image;
   final String title;
@@ -319,70 +357,94 @@ class _EditorialTile extends StatelessWidget {
   }
 }
 
+// -- ProductCard luxury style & fully theme-aware --
 class _ProductCard extends StatelessWidget {
   final String name;
   final String price;
   final String imagePath;
+  final ColorScheme colorScheme;
+  final TextTheme textTheme;
 
   const _ProductCard({
     required this.name,
     required this.price,
     required this.imagePath,
+    required this.colorScheme,
+    required this.textTheme,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 10,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset(imagePath, height: 90, fit: BoxFit.contain),
-            const SizedBox(height: 8),
-            Text(
-              name,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 15,
-                color: Colors.black87,
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder:
+                (_) => ProductDetailScreen(
+                  name: name,
+                  price: price,
+                  imagePath: imagePath,
+                ),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Card(
+        elevation: 11,
+        color: colorScheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(imagePath, height: 90, fit: BoxFit.contain),
+              const SizedBox(height: 8),
+              Text(
+                name,
+                style: textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.onSurface,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              price,
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.shopping_cart_outlined, size: 17),
-                label: const Text("Add to Cart"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                  textStyle: const TextStyle(fontWeight: FontWeight.bold),
+              const SizedBox(height: 4),
+              Text(
+                price,
+                style: textTheme.titleMedium?.copyWith(
+                  color: accent,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-          ],
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.shopping_cart_outlined, size: 17),
+                  label: const Text("Add to Cart"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: accent,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                      vertical: 10,
+                    ),
+                    textStyle: textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,48 +1,57 @@
 import 'package:flutter/material.dart';
 
+const Color accent = Color(0xFFD1B464);
+
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double heroHeight =
-        screenWidth * 0.9; // Makes the hero banner responsive
+    final double heroHeight = screenWidth * 0.9;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F6F2),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeroBanner(context, heroHeight),
-            _buildSectionDivider(),
-            _buildQuoteSection(),
-            _buildSectionDivider(),
-            _buildBrandStory(context),
-            _buildSectionDivider(),
-            _buildAboutContent(context),
-            _buildSectionDivider(),
-            _buildTeamSection(context, screenWidth),
-            _buildSectionDivider(),
-            _buildMissionVisionSection(context),
-            _buildSectionDivider(),
-            _buildContactInfo(context),
-            const SizedBox(height: 20),
-          ],
+      backgroundColor: colorScheme.background,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeroBanner(context, heroHeight),
+              _buildSectionDivider(),
+              _buildQuoteSection(context),
+              _buildSectionDivider(),
+              _buildBrandStory(context),
+              _buildSectionDivider(),
+              _buildAboutContent(context),
+              _buildSectionDivider(),
+              _buildTeamSection(context, screenWidth),
+              _buildSectionDivider(),
+              _buildMissionVisionSection(context),
+              _buildSectionDivider(),
+              _buildContactInfo(context),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  /// Hero banner with background image and overlay
   Widget _buildHeroBanner(BuildContext context, double heroHeight) {
+    final textTheme = Theme.of(context).textTheme;
     return Stack(
       children: [
-        SizedBox(
-          height: heroHeight,
-          width: double.infinity,
-          child: Image.asset('assets/images/hero_watch.jpg', fit: BoxFit.cover),
+        Semantics(
+          label: "Hero image of luxury watch for accessibility",
+          child: SizedBox(
+            height: heroHeight,
+            width: double.infinity,
+            child: Image.asset('assets/images/hero_watch.jpg', fit: BoxFit.cover),
+          ),
         ),
         Container(
           height: heroHeight,
@@ -66,7 +75,7 @@ class AboutScreen extends StatelessWidget {
               children: [
                 Text(
                   "ZENTARA",
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  style: textTheme.headlineMedium?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 6,
@@ -76,10 +85,7 @@ class AboutScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(12),
@@ -109,6 +115,7 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
+  /// Decorative gold divider
   Widget _buildSectionDivider() {
     return Container(
       alignment: Alignment.center,
@@ -126,12 +133,14 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuoteSection() {
+  /// Quote Section for luxury brand touch
+  Widget _buildQuoteSection(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
@@ -157,11 +166,13 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
+  /// Responsive Brand Story: Image and Text side by side or stacked
   Widget _buildBrandStory(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
-    // If the screen is small, stack vertically. Otherwise, use Row.
-    bool isNarrow = screenWidth < 500; // You can adjust this threshold
+    bool isNarrow = screenWidth < 500;
 
     final imageWidget = ClipRRect(
       borderRadius: BorderRadius.circular(12),
@@ -173,12 +184,16 @@ class AboutScreen extends StatelessWidget {
       ),
     );
 
-    final textWidget = const Expanded(
+    final textWidget = Expanded(
       child: Padding(
-        padding: EdgeInsets.only(left: 10, top: 6),
+        padding: const EdgeInsets.only(left: 10, top: 6),
         child: Text(
           "Founded in the heart of Colombo, Zentara was born out of a passion for precision and a vision to redefine modern luxury. Each piece we craft tells a tale of heritage, innovation, and artistry — where tradition meets timeless beauty.",
-          style: TextStyle(color: Colors.black87, fontSize: 14, height: 1.4),
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onBackground,
+            fontSize: 14,
+            height: 1.4,
+          ),
         ),
       ),
     );
@@ -188,56 +203,56 @@ class AboutScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             "Our Story",
-            style: TextStyle(
-              color: Color(0xFFD1B464),
-              fontSize: 20,
+            style: textTheme.titleLarge?.copyWith(
+              color: accent,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.3,
             ),
           ),
           const SizedBox(height: 10),
           isNarrow
-              // On narrow screens, stack image above text
               ? Column(
-                children: [
-                  imageWidget,
-                  const SizedBox(height: 10),
-                  const Text(
-                    "Founded in the heart of Colombo, Zentara was born out of a passion for precision and a vision to redefine modern luxury. Each piece we craft tells a tale of heritage, innovation, and artistry — where tradition meets timeless beauty.",
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 14,
-                      height: 1.4,
+                  children: [
+                    imageWidget,
+                    const SizedBox(height: 10),
+                    Text(
+                      "Founded in the heart of Colombo, Zentara was born out of a passion for precision and a vision to redefine modern luxury. Each piece we craft tells a tale of heritage, innovation, and artistry — where tradition meets timeless beauty.",
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onBackground,
+                        fontSize: 14,
+                        height: 1.4,
+                      ),
                     ),
-                  ),
-                ],
-              )
-              // On wider screens, show Row (image + text)
+                  ],
+                )
               : Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [imageWidget, textWidget],
-              ),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [imageWidget, textWidget],
+                ),
         ],
       ),
     );
   }
 
+  /// About Content Section
   Widget _buildAboutContent(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Card(
-        color: Colors.white,
+        color: colorScheme.surface,
         elevation: 3,
-        shadowColor: const Color(0xFFE3C77B).withOpacity(0.15),
+        shadowColor: accent.withOpacity(0.15),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         child: Padding(
           padding: const EdgeInsets.all(14.0),
           child: Text(
             "At Zentara, we create more than just watches — we create legacy. Our designs embody excellence, precision, and prestige. We partner with world-renowned craftsmen to fuse innovation with tradition, delivering pieces that are both enduring and enchanting.",
-            style: const TextStyle(
-              color: Colors.black87,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface,
               fontSize: 14,
               height: 1.4,
             ),
@@ -247,30 +262,29 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
+  /// Team Section with horizontal scroll and responsive sizing
   Widget _buildTeamSection(BuildContext context, double screenWidth) {
-    // Increase the proportion and the max width
     double tileWidth = screenWidth * 0.48 > 150 ? 150 : screenWidth * 0.48;
-
     double avatarRadius = tileWidth / 2.1;
-   
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             "Meet Our Team",
-            style: TextStyle(
-              color: Color(0xFFD1B464),
-              fontSize: 18,
+            style: textTheme.titleMedium?.copyWith(
+              color: accent,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
             ),
           ),
           const SizedBox(height: 16),
           SizedBox(
-            height: 200, // Give enough room for bigger avatars + text
+            height: 200,
             child: ListView(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
@@ -281,6 +295,8 @@ class AboutScreen extends StatelessWidget {
                   imageAsset: "assets/images/team_arjun.jpg",
                   tileWidth: tileWidth,
                   avatarRadius: avatarRadius,
+                  textTheme: textTheme,
+                  colorScheme: colorScheme,
                 ),
                 const SizedBox(width: 16),
                 TeamMemberTile(
@@ -289,6 +305,8 @@ class AboutScreen extends StatelessWidget {
                   imageAsset: "assets/images/team_leena.jpg",
                   tileWidth: tileWidth,
                   avatarRadius: avatarRadius,
+                  textTheme: textTheme,
+                  colorScheme: colorScheme,
                 ),
                 const SizedBox(width: 16),
                 TeamMemberTile(
@@ -297,6 +315,8 @@ class AboutScreen extends StatelessWidget {
                   imageAsset: "assets/images/team_michael.jpg",
                   tileWidth: tileWidth,
                   avatarRadius: avatarRadius,
+                  textTheme: textTheme,
+                  colorScheme: colorScheme,
                 ),
               ],
             ),
@@ -306,98 +326,118 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
+  /// Mission & Vision Section with brand gold accent
   Widget _buildMissionVisionSection(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children: [
           Text(
             "Our Mission",
-            style: TextStyle(
-              color: Color(0xFFD1B464),
-              fontSize: 15,
+            style: textTheme.titleSmall?.copyWith(
+              color: accent,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             "To deliver timeless luxury through precision, elegance, and innovation.",
-            style: TextStyle(color: Colors.black87, fontSize: 13, height: 1.4),
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onBackground,
+              fontSize: 13,
+              height: 1.4,
+            ),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           Text(
             "Our Vision",
-            style: TextStyle(
-              color: Color(0xFFD1B464),
-              fontSize: 15,
+            style: textTheme.titleSmall?.copyWith(
+              color: accent,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             "To be the world's most trusted and admired luxury timepiece brand.",
-            style: TextStyle(color: Colors.black87, fontSize: 13, height: 1.4),
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onBackground,
+              fontSize: 13,
+              height: 1.4,
+            ),
           ),
         ],
       ),
     );
   }
 
+  /// Contact Info Card (uses theme for colors)
   Widget _buildContactInfo(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Card(
-        color: Colors.white,
+        color: colorScheme.surface,
         elevation: 3,
-        shadowColor: const Color(0xFFE3C77B).withOpacity(0.13),
+        shadowColor: accent.withOpacity(0.13),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "Contact Us",
-                style: TextStyle(
-                  color: Color(0xFFD1B464),
-                  fontSize: 17,
+                style: textTheme.titleMedium?.copyWith(
+                  color: accent,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
               Row(
-                children: const [
-                  Icon(Icons.email, color: Color(0xFFD1B464), size: 18),
-                  SizedBox(width: 8),
+                children: [
+                  Icon(Icons.email, color: accent, size: 18),
+                  const SizedBox(width: 8),
                   Text(
                     "support@zentara.com",
-                    style: TextStyle(color: Colors.black87, fontSize: 13),
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                      fontSize: 13,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               Row(
-                children: const [
-                  Icon(Icons.phone, color: Color(0xFFD1B464), size: 18),
-                  SizedBox(width: 8),
+                children: [
+                  Icon(Icons.phone, color: accent, size: 18),
+                  const SizedBox(width: 8),
                   Text(
                     "+94 77 123 4567",
-                    style: TextStyle(color: Colors.black87, fontSize: 13),
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                      fontSize: 13,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               Row(
-                children: const [
-                  Icon(Icons.location_on, color: Color(0xFFD1B464), size: 18),
-                  SizedBox(width: 8),
+                children: [
+                  Icon(Icons.location_on, color: accent, size: 18),
+                  const SizedBox(width: 8),
                   Flexible(
                     child: Text(
                       "45B Luxury Avenue, Colombo 07, Sri Lanka",
-                      style: TextStyle(color: Colors.black87, fontSize: 13),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ],
@@ -410,12 +450,15 @@ class AboutScreen extends StatelessWidget {
   }
 }
 
+/// TeamMemberTile is a reusable widget for displaying team members
 class TeamMemberTile extends StatelessWidget {
   final String name;
   final String role;
   final String imageAsset;
   final double tileWidth;
   final double avatarRadius;
+  final TextTheme textTheme;
+  final ColorScheme colorScheme;
 
   const TeamMemberTile({
     super.key,
@@ -424,6 +467,8 @@ class TeamMemberTile extends StatelessWidget {
     required this.imageAsset,
     required this.tileWidth,
     required this.avatarRadius,
+    required this.textTheme,
+    required this.colorScheme,
   });
 
   @override
@@ -436,10 +481,10 @@ class TeamMemberTile extends StatelessWidget {
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFD1B464), width: 2.5),
+              border: Border.all(color: accent, width: 2.5),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFD1B464).withOpacity(0.13),
+                  color: accent.withOpacity(0.13),
                   blurRadius: 9,
                   spreadRadius: 1,
                 ),
@@ -448,14 +493,14 @@ class TeamMemberTile extends StatelessWidget {
             child: CircleAvatar(
               radius: avatarRadius,
               backgroundImage: AssetImage(imageAsset),
-              backgroundColor: const Color(0xFF333333),
+              backgroundColor: colorScheme.onInverseSurface,
             ),
           ),
           const SizedBox(height: 10),
           Text(
             name,
-            style: const TextStyle(
-              color: Colors.black87,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onBackground,
               fontWeight: FontWeight.w600,
               fontSize: 12,
             ),
@@ -465,7 +510,10 @@ class TeamMemberTile extends StatelessWidget {
           ),
           Text(
             role,
-            style: const TextStyle(color: Colors.black54, fontSize: 11),
+            style: textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.6),
+              fontSize: 11,
+            ),
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
