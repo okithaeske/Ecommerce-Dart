@@ -12,38 +12,87 @@ class ContactUsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: colorScheme.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              ContactHeroBanner(),
-              ContactFormCard(),
-              ContactSectionDivider(),
-              ContactDetailsSection(),
-              ShopLocationsSection(),
-              MapPreviewSection(),
-              NewsletterSection(),
-            ],
-          ),
-        ),
+        child: _ResponsiveBody(), // Responsive wrapper
       ),
     );
+  }
+}
+
+// --- Responsive switcher: column for mobile, row for landscape/tablet ---
+class _ResponsiveBody extends StatelessWidget {
+  const _ResponsiveBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final width = MediaQuery.of(context).size.width;
+
+    if (isLandscape && width > 800) {
+      // Tablet/Landscape/Web
+      return SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 32),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left: Hero + Form + Newsletter
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  ContactHeroBanner(),
+                  ContactFormCard(),
+                  NewsletterSection(),
+                ],
+              ),
+            ),
+            const SizedBox(width: 36),
+            // Right: Details/Locations/Map
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  ContactSectionDivider(),
+                  ContactDetailsSection(),
+                  ShopLocationsSection(),
+                  MapPreviewSection(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Mobile/Portrait
+      return SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            ContactHeroBanner(),
+            ContactFormCard(),
+            ContactSectionDivider(),
+            ContactDetailsSection(),
+            ShopLocationsSection(),
+            MapPreviewSection(),
+            NewsletterSection(),
+          ],
+        ),
+      );
+    }
   }
 }
 
 // --- Hero Banner Section with slight fade-in animation ---
 class ContactHeroBanner extends StatefulWidget {
   const ContactHeroBanner({super.key});
-
   @override
   State<ContactHeroBanner> createState() => _ContactHeroBannerState();
 }
-
 class _ContactHeroBannerState extends State<ContactHeroBanner> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnim;
-
   @override
   void initState() {
     super.initState();
@@ -51,17 +100,14 @@ class _ContactHeroBannerState extends State<ContactHeroBanner> with SingleTicker
     _fadeAnim = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
   }
-
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
     return Semantics(
       label: "Contact Us hero banner with luxury watch background",
       child: Stack(
@@ -105,15 +151,12 @@ class ContactFormCard extends StatefulWidget {
   @override
   State<ContactFormCard> createState() => _ContactFormCardState();
 }
-
 class _ContactFormCardState extends State<ContactFormCard> {
   bool _agreed = false;
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       child: Card(
@@ -258,7 +301,6 @@ class ContactDetailsSection extends StatelessWidget {
       ),
     );
   }
-
   Widget _iconRow(BuildContext context, IconData icon, String text) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -326,6 +368,7 @@ class MapPreviewSection extends StatelessWidget {
   const MapPreviewSection({super.key});
   @override
   Widget build(BuildContext context) {
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
     return Semantics(
       label: "Preview of our shop locations on a map",
       child: Padding(
@@ -334,7 +377,7 @@ class MapPreviewSection extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           child: Image.asset(
             'assets/images/preview_map.png',
-            height: 140,
+            height: isLandscape ? 180 : 140,
             width: double.infinity,
             fit: BoxFit.cover,
           ),

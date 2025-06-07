@@ -7,36 +7,88 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double heroHeight = screenWidth * 0.9;
-    final colorScheme = Theme.of(context).colorScheme;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double screenWidth = constraints.maxWidth;
+        final bool isWide = screenWidth > 800;
+        final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+        final double heroHeight = isWide || isLandscape ? screenWidth * 0.55 : screenWidth * 0.9;
+        final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      backgroundColor: colorScheme.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
-          child: Column(
+        EdgeInsets mainPadding = EdgeInsets.symmetric(
+          horizontal: isWide ? 60 : 0,
+          vertical: 10,
+        );
+
+        Widget mainColumn = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeroBanner(context, heroHeight),
+            _buildSectionDivider(),
+            _buildQuoteSection(context),
+            _buildSectionDivider(),
+            _buildBrandStory(context),
+            _buildSectionDivider(),
+            _buildAboutContent(context),
+            _buildSectionDivider(),
+            _buildTeamSection(context, screenWidth),
+            _buildSectionDivider(),
+            _buildMissionVisionSection(context),
+            _buildSectionDivider(),
+            _buildContactInfo(context),
+            const SizedBox(height: 20),
+          ],
+        );
+
+        if (isWide) {
+          mainColumn = Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeroBanner(context, heroHeight),
-              _buildSectionDivider(),
-              _buildQuoteSection(context),
-              _buildSectionDivider(),
-              _buildBrandStory(context),
-              _buildSectionDivider(),
-              _buildAboutContent(context),
-              _buildSectionDivider(),
-              _buildTeamSection(context, screenWidth),
-              _buildSectionDivider(),
-              _buildMissionVisionSection(context),
-              _buildSectionDivider(),
-              _buildContactInfo(context),
-              const SizedBox(height: 20),
+              // Left column
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeroBanner(context, heroHeight),
+                    _buildSectionDivider(),
+                    _buildBrandStory(context),
+                    _buildSectionDivider(),
+                    _buildAboutContent(context),
+                    _buildSectionDivider(),
+                    _buildMissionVisionSection(context),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 40),
+              // Right column
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildQuoteSection(context),
+                    _buildSectionDivider(),
+                    _buildTeamSection(context, screenWidth), // Always horizontal!
+                    _buildSectionDivider(),
+                    _buildContactInfo(context),
+                  ],
+                ),
+              ),
             ],
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: colorScheme.background,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: mainPadding,
+              child: mainColumn,
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -171,7 +223,6 @@ class AboutScreen extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-
     bool isNarrow = screenWidth < 500;
 
     final imageWidget = ClipRRect(
@@ -262,12 +313,37 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  /// Team Section with horizontal scroll and responsive sizing
+    /// Team Section with horizontal scroll and responsive sizing
   Widget _buildTeamSection(BuildContext context, double screenWidth) {
-    double tileWidth = screenWidth * 0.48 > 150 ? 150 : screenWidth * 0.48;
-    double avatarRadius = tileWidth / 2.1;
+    // Use a percentage of available height for avatar, max 80 on small, up to 110 on big
+    final isNarrow = screenWidth < 600;
+    final double tileWidth = isNarrow ? screenWidth * 0.48 : 160;
+    final double avatarRadius = isNarrow
+        ? (tileWidth / 2.3).clamp(34.0, 60.0)
+        : 55; // Clamp for safety, adjust as you like
+
+    final double tileHeight = avatarRadius * 2 + 44; // Avatar + text + padding
+
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
+
+    final team = [
+      {
+        "name": "Arjun Silva",
+        "role": "Founder & CEO",
+        "imageAsset": "assets/images/team_arjun.jpg"
+      },
+      {
+        "name": "Leena Perera",
+        "role": "Head of Design",
+        "imageAsset": "assets/images/team_leena.jpg"
+      },
+      {
+        "name": "Michael Lee",
+        "role": "Craftsmanship Director",
+        "imageAsset": "assets/images/team_michael.jpg"
+      },
+    ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -284,41 +360,22 @@ class AboutScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           SizedBox(
-            height: 200,
-            child: ListView(
+            height: tileHeight + 24, // Add a bit more for safe padding
+            child: ListView.separated(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
-              children: [
-                TeamMemberTile(
-                  name: "Arjun Silva",
-                  role: "Founder & CEO",
-                  imageAsset: "assets/images/team_arjun.jpg",
-                  tileWidth: tileWidth,
-                  avatarRadius: avatarRadius,
-                  textTheme: textTheme,
-                  colorScheme: colorScheme,
-                ),
-                const SizedBox(width: 16),
-                TeamMemberTile(
-                  name: "Leena Perera",
-                  role: "Head of Design",
-                  imageAsset: "assets/images/team_leena.jpg",
-                  tileWidth: tileWidth,
-                  avatarRadius: avatarRadius,
-                  textTheme: textTheme,
-                  colorScheme: colorScheme,
-                ),
-                const SizedBox(width: 16),
-                TeamMemberTile(
-                  name: "Michael Lee",
-                  role: "Craftsmanship Director",
-                  imageAsset: "assets/images/team_michael.jpg",
-                  tileWidth: tileWidth,
-                  avatarRadius: avatarRadius,
-                  textTheme: textTheme,
-                  colorScheme: colorScheme,
-                ),
-              ],
+              itemCount: team.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 16),
+              itemBuilder: (context, i) => TeamMemberTile(
+                name: team[i]["name"]!,
+                role: team[i]["role"]!,
+                imageAsset: team[i]["imageAsset"]!,
+                tileWidth: tileWidth,
+                avatarRadius: avatarRadius,
+                tileHeight: tileHeight,
+                textTheme: textTheme,
+                colorScheme: colorScheme,
+              ),
             ),
           ),
         ],
@@ -450,13 +507,14 @@ class AboutScreen extends StatelessWidget {
   }
 }
 
-/// TeamMemberTile is a reusable widget for displaying team members
+/// Updated TeamMemberTile to be vertically flexible and avoid overflow
 class TeamMemberTile extends StatelessWidget {
   final String name;
   final String role;
   final String imageAsset;
   final double tileWidth;
   final double avatarRadius;
+  final double tileHeight;
   final TextTheme textTheme;
   final ColorScheme colorScheme;
 
@@ -467,6 +525,7 @@ class TeamMemberTile extends StatelessWidget {
     required this.imageAsset,
     required this.tileWidth,
     required this.avatarRadius,
+    required this.tileHeight,
     required this.textTheme,
     required this.colorScheme,
   });
@@ -475,7 +534,9 @@ class TeamMemberTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: tileWidth,
+      height: tileHeight,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             padding: const EdgeInsets.all(3),
@@ -496,7 +557,7 @@ class TeamMemberTile extends StatelessWidget {
               backgroundColor: colorScheme.onInverseSurface,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Text(
             name,
             style: textTheme.bodyMedium?.copyWith(
