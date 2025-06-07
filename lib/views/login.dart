@@ -10,7 +10,8 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   bool _obscurePassword = true;
   bool _emailFocused = false;
   bool _passwordFocused = false;
@@ -53,7 +54,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      colorScheme.surfaceVariant.withOpacity(isDark ? 0.25 : 0.20),
+                      colorScheme.surfaceVariant.withOpacity(
+                        isDark ? 0.25 : 0.20,
+                      ),
                       colorScheme.primary.withOpacity(0.03),
                       colorScheme.background,
                     ],
@@ -67,83 +70,102 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           // Responsive Layout
           isWide
               ? Row(
-                  children: [
-                    // Left: Brand / Hero Image panel
-                    Expanded(
-                      flex: 2,
+                children: [
+                  // Left: Brand / Hero Image panel
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceVariant,
+                        image: const DecorationImage(
+                          image: AssetImage(
+                            'assets/images/hero_watchproduct.jpg',
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                       child: Container(
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceVariant,
-                          image: const DecorationImage(
-                            image: AssetImage('assets/images/hero_watchproduct.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: Container(
-                          color: Colors.black.withOpacity(0.38),
-                          child: Center(
-                            child: Text(
-                              'ZENATARA\nLUXURY WATCHES',
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.93),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 34,
-                                letterSpacing: 2.5,
-                                height: 1.15,
-                                shadows: [Shadow(color: Colors.black45, blurRadius: 6)],
-                              ),
-                              textAlign: TextAlign.center,
+                        color: Colors.black.withOpacity(0.38),
+                        child: Center(
+                          child: Text(
+                            'ZENATARA\nLUXURY WATCHES',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.93),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 34,
+                              letterSpacing: 2.5,
+                              height: 1.15,
+                              shadows: [
+                                Shadow(color: Colors.black45, blurRadius: 6),
+                              ],
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                      ),
-                    ),
-                    // Right: Login Card - make sure it's scrollable!
-                    Expanded(
-                      flex: 3,
-                      child: Center(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(horizontal: 42.0, vertical: 34),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 420),
-                            child: _LoginCard(
-                              fadeController: _fadeController,
-                              emailController: widget.emailController,
-                              passwordController: widget.passwordController,
-                              obscurePassword: _obscurePassword,
-                              emailFocused: _emailFocused,
-                              passwordFocused: _passwordFocused,
-                              onEmailFocus: (v) => setState(() => _emailFocused = v),
-                              onPasswordFocus: (v) => setState(() => _passwordFocused = v),
-                              onTogglePassword: () => setState(() => _obscurePassword = !_obscurePassword),
-                              onSubmit: () => _submit(context),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : Center(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 420),
-                      child: _LoginCard(
-                        fadeController: _fadeController,
-                        emailController: widget.emailController,
-                        passwordController: widget.passwordController,
-                        obscurePassword: _obscurePassword,
-                        emailFocused: _emailFocused,
-                        passwordFocused: _passwordFocused,
-                        onEmailFocus: (v) => setState(() => _emailFocused = v),
-                        onPasswordFocus: (v) => setState(() => _passwordFocused = v),
-                        onTogglePassword: () => setState(() => _obscurePassword = !_obscurePassword),
-                        onSubmit: () => _submit(context),
                       ),
                     ),
                   ),
+                  // Right: Login Card - make sure it's scrollable!
+                  Expanded(
+                    flex: 3,
+                    child: Center(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 42.0,
+                          vertical: 34,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 420),
+                          child: _LoginCard(
+                            fadeController: _fadeController,
+                            emailController: widget.emailController,
+                            passwordController: widget.passwordController,
+                            obscurePassword: _obscurePassword,
+                            emailFocused: _emailFocused,
+                            passwordFocused: _passwordFocused,
+                            onEmailFocus:
+                                (v) => setState(() => _emailFocused = v),
+                            onPasswordFocus:
+                                (v) => setState(() => _passwordFocused = v),
+                            onTogglePassword:
+                                () => setState(
+                                  () => _obscurePassword = !_obscurePassword,
+                                ),
+                            onSubmit: () => _submit(context),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+              : Center(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding,
+                    vertical: 24,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 420),
+                    child: _LoginCard(
+                      fadeController: _fadeController,
+                      emailController: widget.emailController,
+                      passwordController: widget.passwordController,
+                      obscurePassword: _obscurePassword,
+                      emailFocused: _emailFocused,
+                      passwordFocused: _passwordFocused,
+                      onEmailFocus: (v) => setState(() => _emailFocused = v),
+                      onPasswordFocus:
+                          (v) => setState(() => _passwordFocused = v),
+                      onTogglePassword:
+                          () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
+                      onSubmit: () => _submit(context),
+                    ),
+                  ),
                 ),
+              ),
         ],
       ),
     );
@@ -179,7 +201,6 @@ class _LoginCard extends StatelessWidget {
     required this.onPasswordFocus,
     required this.onTogglePassword,
     required this.onSubmit,
-    super.key,
   });
 
   @override
@@ -195,9 +216,10 @@ class _LoginCard extends StatelessWidget {
             child: Icon(
               Icons.lock_outline,
               size: 80,
-              color: emailFocused || passwordFocused
-                  ? colorScheme.primary
-                  : colorScheme.primary.withOpacity(0.8),
+              color:
+                  emailFocused || passwordFocused
+                      ? colorScheme.primary
+                      : colorScheme.primary.withOpacity(0.8),
               shadows: [
                 if (emailFocused || passwordFocused)
                   Shadow(
@@ -236,14 +258,22 @@ class _LoginCard extends StatelessWidget {
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         labelText: "Email",
-                        labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.7)),
-                        prefixIcon: Icon(Icons.email, color: colorScheme.primary),
+                        labelStyle: TextStyle(
+                          color: colorScheme.onSurface.withOpacity(0.7),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.email,
+                          color: colorScheme.primary,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
+                          borderSide: BorderSide(
+                            color: colorScheme.primary,
+                            width: 2.0,
+                          ),
                         ),
                         fillColor: colorScheme.surface,
                         filled: true,
@@ -259,22 +289,35 @@ class _LoginCard extends StatelessWidget {
                       style: TextStyle(color: colorScheme.onSurface),
                       decoration: InputDecoration(
                         labelText: "Password",
-                        labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.7)),
-                        prefixIcon: Icon(Icons.lock, color: colorScheme.primary),
+                        labelStyle: TextStyle(
+                          color: colorScheme.onSurface.withOpacity(0.7),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: colorScheme.primary,
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            obscurePassword ? Icons.visibility_off : Icons.visibility,
+                            obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: colorScheme.primary,
                           ),
                           onPressed: onTogglePassword,
-                          tooltip: obscurePassword ? "Show password" : "Hide password",
+                          tooltip:
+                              obscurePassword
+                                  ? "Show password"
+                                  : "Hide password",
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
+                          borderSide: BorderSide(
+                            color: colorScheme.primary,
+                            width: 2.0,
+                          ),
                         ),
                         fillColor: colorScheme.surface,
                         filled: true,
@@ -308,6 +351,18 @@ class _LoginCard extends StatelessWidget {
                     child: Text(
                       "Forgot Password?",
                       style: TextStyle(color: colorScheme.secondary),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, AppRoutes.register);
+                    },
+                    child: Text(
+                      "Don't have an account? Register",
+                      style: TextStyle(
+                        color: colorScheme.secondary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],

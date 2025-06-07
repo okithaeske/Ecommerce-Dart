@@ -1,3 +1,5 @@
+import 'package:ecommerce/utils/widgets.dart';
+import 'package:ecommerce/views/screens/product_screen.dart';
 import 'package:flutter/material.dart';
 
 const Color accent = Color(0xFFD1B464); // Brand gold
@@ -89,7 +91,7 @@ class HomeScreen extends StatelessWidget {
             child: Text("New Arrivals", style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onBackground)),
           ),
           SizedBox(
-            height: 220,
+            height: 240,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: watches.length,
@@ -473,6 +475,7 @@ class _WatchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
+        // Preview or show product detail
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Preview: $name')),
         );
@@ -492,23 +495,47 @@ class _WatchCard extends StatelessWidget {
           ],
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(imagePath, height: 120, fit: BoxFit.cover),
+            buildHeroImage(imagePath, accent, height: 110), // Use your luxury image style!
             const SizedBox(height: 8),
             Text(
               name,
               style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
+              textAlign: TextAlign.center,
             ),
             Text(
               price,
               style: textTheme.bodyMedium?.copyWith(color: accent),
+              textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  // Go to cart page (replace with your cart route)
+                  Navigator.pushNamed(context, ProductScreen() as String );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: accent,
+                  foregroundColor: Colors.black,
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+                  padding: const EdgeInsets.symmetric(vertical: 9),
+                  textStyle: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                child: const Text('Shop Now'),
+              ),
+            ),
+            const SizedBox(height: 7),
           ],
         ),
       ),
     );
   }
 }
+
 
 // --- Testimonial Card with accent icons ---
 class _TestimonialCard extends StatelessWidget {
