@@ -1,3 +1,4 @@
+import 'package:ecommerce/utils/theme.dart';
 import 'package:ecommerce/utils/widgets.dart';
 import 'package:ecommerce/views/screens/product_screen.dart';
 import 'package:flutter/material.dart';
@@ -20,13 +21,16 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _AnimatedHeroBanner(colorScheme: colorScheme, textTheme: textTheme),
+              _AnimatedHeroBanner(
+                colorScheme: colorScheme,
+                textTheme: textTheme,
+              ),
               const _SectionDivider(),
               _buildFeatureHighlights(colorScheme, width),
               const _SectionDivider(),
               _buildNewArrivals(context, colorScheme, textTheme, width),
               const _SectionDivider(),
-              _buildPromoSection(colorScheme, textTheme, width),
+              _buildPromoSection(context, colorScheme, textTheme, width),
               const _SectionDivider(),
               _buildBrandRow(colorScheme, textTheme, width),
               const _SectionDivider(),
@@ -53,12 +57,15 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: items
-              .map((item) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 7),
-                    child: Center(child: item),
-                  ))
-              .toList(),
+          children:
+              items
+                  .map(
+                    (item) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 7),
+                      child: Center(child: item),
+                    ),
+                  )
+                  .toList(),
         ),
       );
     }
@@ -73,21 +80,18 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNewArrivals(BuildContext context, ColorScheme colorScheme, TextTheme textTheme, double width) {
+  Widget _buildNewArrivals(
+    BuildContext context,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    double width,
+  ) {
     final watches = [
       {"name": "ASTRON", "price": "\$52,000"},
-      {"name": "CITIZEN", "price": "\$38,000"},
+      {"name": "CITIZEN", "price": "\$38,00"},
       {"name": "OMEGA", "price": "\$102,000"},
       {"name": "SEIKO", "price": "\$46,200"},
     ];
-
-    // Minimum card width for grid
-    const double minCardWidth = 170;
-    // Responsive columns, but never let a card get too small
-    int columns = (width ~/ minCardWidth).clamp(2, 4);
-    // Responsive aspect ratio
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-    double aspectRatio = isLandscape ? 1.0 : 0.8;
 
     if (width < 600) {
       // Horizontal list for phones
@@ -96,14 +100,19 @@ class HomeScreen extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Text("New Arrivals", style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onBackground)),
+            child: Text(
+              "New Arrivals",
+              style: textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onBackground,
+              ),
+            ),
           ),
           SizedBox(
             height: 240,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: watches.length,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
               itemBuilder: (context, index) {
                 return _WatchCard(
                   name: watches[index]['name']!,
@@ -111,7 +120,7 @@ class HomeScreen extends StatelessWidget {
                   imagePath: 'assets/images/watch${index + 1}.jpg',
                   colorScheme: colorScheme,
                   textTheme: textTheme,
-                  width: 150,
+                  width: 140,
                 );
               },
             ),
@@ -120,39 +129,40 @@ class HomeScreen extends StatelessWidget {
       );
     } else {
       // Responsive grid for wide screens/tablets/web
-      double cardWidth = (width - 24 - (columns - 1) * 16) / columns;
-      cardWidth = cardWidth < minCardWidth ? minCardWidth : cardWidth;
+      int columns = (width ~/ 220).clamp(2, 4);
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: Text("New Arrivals", style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onBackground)),
+            child: Text(
+              "New Arrivals",
+              style: textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onBackground,
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: aspectRatio,
-                  ),
-                  itemCount: watches.length,
-                  itemBuilder: (context, index) {
-                    return _WatchCard(
-                      name: watches[index]['name']!,
-                      price: watches[index]['price']!,
-                      imagePath: 'assets/images/watch${index + 1}.jpg',
-                      colorScheme: colorScheme,
-                      textTheme: textTheme,
-                      width: cardWidth,
-                    );
-                  },
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: columns,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 0.8,
+              ),
+              itemCount: watches.length,
+              itemBuilder: (context, index) {
+                return _WatchCard(
+                  name: watches[index]['name']!,
+                  price: watches[index]['price']!,
+                  imagePath: 'assets/images/watch${index + 1}.jpg',
+                  colorScheme: colorScheme,
+                  textTheme: textTheme,
+                  width: width / columns - 28,
                 );
               },
             ),
@@ -162,7 +172,14 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
-  Widget _buildPromoSection(ColorScheme colorScheme, TextTheme textTheme, double width) {
+  Widget _buildPromoSection(
+    BuildContext context,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    double width,
+  ) {
+    final customColors = Theme.of(context).extension<CustomColors>()!;
+    final promoTextColor = customColors.promoTextColor;
     return Container(
       height: width < 500 ? 120 : 180,
       margin: const EdgeInsets.symmetric(vertical: 16),
@@ -179,87 +196,101 @@ class HomeScreen extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: Text(
             "Choose a watch that suits who you are.\nWe make it easy for you to find the perfect timepiece.",
-            style: textTheme.titleMedium?.copyWith(color: colorScheme.onPrimary),
+            style: textTheme.titleMedium?.copyWith(color: promoTextColor),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBrandRow(ColorScheme colorScheme, TextTheme textTheme, double width) {
-  final brands = ["timex", "gucci", "omega", "tissot", "rolex", "casio"];
-  double imageWidth = width < 450 ? 110 : (width < 700 ? 140 : 200);
-  double imageHeight = width < 450 ? 40 : (width < 700 ? 60 : 80);
+  Widget _buildBrandRow(
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    double width,
+  ) {
+    final brands = ["timex", "gucci", "omega", "tissot", "rolex", "casio"];
+    double imageWidth = width < 450 ? 110 : (width < 700 ? 140 : 200);
+    double imageHeight = width < 450 ? 40 : (width < 700 ? 60 : 80);
 
-  if (width < 600) {
-    // For phones: wrap logos in grid/wrap layout
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            "Brands We Love",
-            style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold, color: colorScheme.onBackground),
+    if (width < 600) {
+      // For phones: wrap logos in grid/wrap layout
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              "Brands We Love",
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onBackground,
+              ),
+            ),
           ),
-        ),
-        Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 16,
-          runSpacing: 12,
-          children: brands
-              .map((brand) => Image.asset(
-                    'assets/images/$brand.jpg',
-                    width: imageWidth,
-                    height: imageHeight,
-                    fit: BoxFit.contain,
-                  ))
-              .toList(),
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
-  } else {
-    // For wide/tablet/web: horizontal scroll row!
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            "Brands We Love",
-            style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold, color: colorScheme.onBackground),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 16,
+            runSpacing: 12,
+            children:
+                brands
+                    .map(
+                      (brand) => Image.asset(
+                        'assets/images/$brand.jpg',
+                        width: imageWidth,
+                        height: imageHeight,
+                        fit: BoxFit.contain,
+                      ),
+                    )
+                    .toList(),
           ),
-        ),
-        SizedBox(
-          height: imageHeight + 20,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: brands.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 28),
-            itemBuilder: (context, index) {
-              final brand = brands[index];
-              return Image.asset(
-                'assets/images/$brand.jpg',
-                width: imageWidth,
-                height: imageHeight,
-                fit: BoxFit.contain,
-              );
-            },
+          const SizedBox(height: 16),
+        ],
+      );
+    } else {
+      // For wide/tablet/web: horizontal scroll row!
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              "Brands We Love",
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onBackground,
+              ),
+            ),
           ),
-        ),
-        const SizedBox(height: 20),
-      ],
-    );
+          SizedBox(
+            height: imageHeight + 20,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: brands.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 28),
+              itemBuilder: (context, index) {
+                final brand = brands[index];
+                return Image.asset(
+                  'assets/images/$brand.jpg',
+                  width: imageWidth,
+                  height: imageHeight,
+                  fit: BoxFit.contain,
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
+      );
+    }
   }
-}
 
-
-  Widget _buildTestimonials(ColorScheme colorScheme, TextTheme textTheme, double width) {
+  Widget _buildTestimonials(
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    double width,
+  ) {
     final reviews = [
       {"name": "Nimasha", "review": "Absolutely love the design and quality!"},
       {"name": "Ramesh", "review": "Elegant and stylish. A perfect gift."},
@@ -274,19 +305,24 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Text(
               "Testimonials",
-              style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onBackground),
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onBackground,
+              ),
             ),
           ),
-          ...reviews.map((rev) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 18),
-                child: _TestimonialCard(
-                  name: rev['name']!,
-                  review: rev['review']!,
-                  colorScheme: colorScheme,
-                  textTheme: textTheme,
-                  width: width - 36,
-                ),
-              )),
+          ...reviews.map(
+            (rev) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 18),
+              child: _TestimonialCard(
+                name: rev['name']!,
+                review: rev['review']!,
+                colorScheme: colorScheme,
+                textTheme: textTheme,
+                width: width - 36,
+              ),
+            ),
+          ),
           const SizedBox(height: 16),
         ],
       );
@@ -299,21 +335,27 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Text(
             "Testimonials",
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onBackground),
+            style: textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onBackground,
+            ),
           ),
         ),
         Wrap(
           spacing: 16,
           runSpacing: 16,
-          children: reviews
-              .map((rev) => _TestimonialCard(
-                    name: rev['name']!,
-                    review: rev['review']!,
-                    colorScheme: colorScheme,
-                    textTheme: textTheme,
-                    width: width / 3 - 32,
-                  ))
-              .toList(),
+          children:
+              reviews
+                  .map(
+                    (rev) => _TestimonialCard(
+                      name: rev['name']!,
+                      review: rev['review']!,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                      width: width / 3 - 32,
+                    ),
+                  )
+                  .toList(),
         ),
         const SizedBox(height: 16),
       ],
@@ -358,14 +400,18 @@ class _AnimatedHeroBanner extends StatefulWidget {
   State<_AnimatedHeroBanner> createState() => _AnimatedHeroBannerState();
 }
 
-class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner> with SingleTickerProviderStateMixin {
+class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnim;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 850));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 850),
+    );
     _fadeAnim = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
   }
@@ -378,6 +424,8 @@ class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner> with SingleTic
 
   @override
   Widget build(BuildContext context) {
+    final customColors = Theme.of(context).extension<CustomColors>()!;
+    final heroTextColor = customColors.heroTextColor;
     return Semantics(
       label: "Hero banner with luxury watch background",
       child: Container(
@@ -401,7 +449,7 @@ class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner> with SingleTic
                 Text(
                   "Allow Yourself To\nBe A Step Ahead",
                   style: widget.textTheme.headlineSmall?.copyWith(
-                    color: widget.colorScheme.onPrimary,
+                    color: heroTextColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -422,7 +470,9 @@ class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner> with SingleTic
                         foregroundColor: Colors.black,
                         textStyle: const TextStyle(fontWeight: FontWeight.bold),
                         elevation: 1,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                       child: const Text("Shop Now"),
                     ),
@@ -433,7 +483,9 @@ class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner> with SingleTic
                         foregroundColor: accent,
                         side: const BorderSide(color: accent, width: 1.4),
                         textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                       child: const Text("Learn More"),
                     ),
@@ -490,9 +542,9 @@ class _WatchCard extends StatelessWidget {
     return InkWell(
       onTap: () {
         // Preview or show product detail
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Preview: $name')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Preview: $name')));
       },
       borderRadius: BorderRadius.circular(12),
       child: Container(
@@ -511,11 +563,18 @@ class _WatchCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            buildHeroImage(imagePath, accent, height: 110), // Use your luxury image style!
+            buildHeroImage(
+              imagePath,
+              accent,
+              height: 110,
+            ), // Use your luxury image style!
             const SizedBox(height: 8),
             Text(
               name,
-              style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
+              style: textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
+              ),
               textAlign: TextAlign.center,
             ),
             Text(
@@ -532,9 +591,13 @@ class _WatchCard extends StatelessWidget {
                   backgroundColor: accent,
                   foregroundColor: Colors.black,
                   elevation: 1,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(7),
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  textStyle: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+                  textStyle: textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 child: const Text('Shop Now'),
               ),
@@ -546,7 +609,6 @@ class _WatchCard extends StatelessWidget {
     );
   }
 }
-
 
 // --- Testimonial Card with accent icons ---
 class _TestimonialCard extends StatelessWidget {
@@ -585,7 +647,10 @@ class _TestimonialCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             name,
-            style: textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
+            style: textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
           ),
         ],
       ),

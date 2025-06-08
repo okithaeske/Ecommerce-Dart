@@ -1,3 +1,4 @@
+import 'package:ecommerce/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'routes/app_route.dart';
 
@@ -40,6 +41,12 @@ class MyApp extends StatelessWidget {
           seedColor: const Color(0xFFD1B464),
           brightness: Brightness.dark,
         ),
+        extensions: <ThemeExtension<dynamic>>[
+          CustomColors(
+            heroTextColor: const Color.fromARGB(255, 217, 215, 210),
+            promoTextColor: const Color.fromARGB(255, 203, 202, 199),
+          ),
+        ],
         fontFamily: 'Montserrat',
         textTheme: const TextTheme(
           titleLarge: TextStyle(
