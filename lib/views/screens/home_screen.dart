@@ -76,10 +76,18 @@ class HomeScreen extends StatelessWidget {
   Widget _buildNewArrivals(BuildContext context, ColorScheme colorScheme, TextTheme textTheme, double width) {
     final watches = [
       {"name": "ASTRON", "price": "\$52,000"},
-      {"name": "CITIZEN", "price": "\$38,500"},
+      {"name": "CITIZEN", "price": "\$38,000"},
       {"name": "OMEGA", "price": "\$102,000"},
       {"name": "SEIKO", "price": "\$46,200"},
     ];
+
+    // Minimum card width for grid
+    const double minCardWidth = 170;
+    // Responsive columns, but never let a card get too small
+    int columns = (width ~/ minCardWidth).clamp(2, 4);
+    // Responsive aspect ratio
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    double aspectRatio = isLandscape ? 1.0 : 0.8;
 
     if (width < 600) {
       // Horizontal list for phones
@@ -95,6 +103,7 @@ class HomeScreen extends StatelessWidget {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: watches.length,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               itemBuilder: (context, index) {
                 return _WatchCard(
                   name: watches[index]['name']!,
@@ -102,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                   imagePath: 'assets/images/watch${index + 1}.jpg',
                   colorScheme: colorScheme,
                   textTheme: textTheme,
-                  width: 140,
+                  width: 150,
                 );
               },
             ),
@@ -111,7 +120,8 @@ class HomeScreen extends StatelessWidget {
       );
     } else {
       // Responsive grid for wide screens/tablets/web
-      int columns = (width ~/ 220).clamp(2, 4);
+      double cardWidth = (width - 24 - (columns - 1) * 16) / columns;
+      cardWidth = cardWidth < minCardWidth ? minCardWidth : cardWidth;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -121,24 +131,28 @@ class HomeScreen extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: columns,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 0.8,
-              ),
-              itemCount: watches.length,
-              itemBuilder: (context, index) {
-                return _WatchCard(
-                  name: watches[index]['name']!,
-                  price: watches[index]['price']!,
-                  imagePath: 'assets/images/watch${index + 1}.jpg',
-                  colorScheme: colorScheme,
-                  textTheme: textTheme,
-                  width: width / columns - 28,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: aspectRatio,
+                  ),
+                  itemCount: watches.length,
+                  itemBuilder: (context, index) {
+                    return _WatchCard(
+                      name: watches[index]['name']!,
+                      price: watches[index]['price']!,
+                      imagePath: 'assets/images/watch${index + 1}.jpg',
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                      width: cardWidth,
+                    );
+                  },
                 );
               },
             ),
