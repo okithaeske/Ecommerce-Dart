@@ -10,8 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Choose a luxury Google Font (optional, if using fonts)
-    // final baseTextTheme = ThemeData.light().textTheme.apply(fontFamily: 'Montserrat');
+    
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -23,18 +22,16 @@ class MyApp extends StatelessWidget {
           seedColor: const Color(0xFFD1B464),
           brightness: Brightness.light,
         ),
-        fontFamily: 'Montserrat', // Make sure you add to pubspec.yaml
+        fontFamily: 'Montserrat', 
         textTheme: const TextTheme(
           titleLarge: TextStyle(
             fontWeight: FontWeight.bold,
             letterSpacing: 1.2,
             fontFamily: 'Montserrat',
           ),
-          // Customize more as needed!
         ),
         scaffoldBackgroundColor: const Color(0xFFF8F7F3),
         cardColor: Colors.white,
-        // Add more widget themes here if needed!
       ),
       darkTheme: ThemeData(
         useMaterial3: true,

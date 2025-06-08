@@ -25,3 +25,4 @@ Widget buildHeroImage(String imagePath, Color accent, {double height = 90}) {
     ),
   );
 }
+

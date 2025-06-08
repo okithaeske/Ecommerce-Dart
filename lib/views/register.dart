@@ -22,6 +22,15 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
 
   late AnimationController _fadeController;
 
+  // --- Live validation ---
+  bool get canRegister {
+    return widget.nameController.text.isNotEmpty &&
+        widget.emailController.text.isNotEmpty &&
+        widget.passwordController.text.isNotEmpty &&
+        widget.confirmPasswordController.text.isNotEmpty &&
+        widget.passwordController.text == widget.confirmPasswordController.text;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +38,12 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
       vsync: this,
       duration: const Duration(milliseconds: 700),
     )..forward();
+
+    // Add listeners for live validation
+    widget.nameController.addListener(() => setState(() {}));
+    widget.emailController.addListener(() => setState(() {}));
+    widget.passwordController.addListener(() => setState(() {}));
+    widget.confirmPasswordController.addListener(() => setState(() {}));
   }
 
   @override
@@ -39,6 +54,21 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     widget.passwordController.dispose();
     widget.confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  void _submit(BuildContext context) {
+    if (!canRegister) {
+      String error = "All fields required and passwords must match.";
+      if (widget.passwordController.text != widget.confirmPasswordController.text) {
+        error = "Passwords do not match.";
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error), backgroundColor: Colors.red),
+      );
+      return;
+    }
+    // Success: Route to login (simulate registration)
+    Navigator.pushReplacementNamed(context, AppRoutes.login);
   }
 
   @override
@@ -125,6 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                               emailFocused: _emailFocused,
                               passwordFocused: _passwordFocused,
                               confirmFocused: _confirmFocused,
+                              canRegister: canRegister,
                               onNameFocus: (v) => setState(() => _nameFocused = v),
                               onEmailFocus: (v) => setState(() => _emailFocused = v),
                               onPasswordFocus: (v) => setState(() => _passwordFocused = v),
@@ -159,6 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                         emailFocused: _emailFocused,
                         passwordFocused: _passwordFocused,
                         confirmFocused: _confirmFocused,
+                        canRegister: canRegister,
                         onNameFocus: (v) => setState(() => _nameFocused = v),
                         onEmailFocus: (v) => setState(() => _emailFocused = v),
                         onPasswordFocus: (v) => setState(() => _passwordFocused = v),
@@ -177,12 +209,6 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
       ),
     );
   }
-
-  void _submit(BuildContext context) {
-   
-    // For now, just route to home
-    Navigator.pushReplacementNamed(context, AppRoutes.login);
-  }
 }
 
 // --- Register Card split for reuse ---
@@ -198,6 +224,7 @@ class _RegisterCard extends StatelessWidget {
   final bool emailFocused;
   final bool passwordFocused;
   final bool confirmFocused;
+  final bool canRegister;
   final ValueChanged<bool> onNameFocus;
   final ValueChanged<bool> onEmailFocus;
   final ValueChanged<bool> onPasswordFocus;
@@ -219,6 +246,7 @@ class _RegisterCard extends StatelessWidget {
     required this.emailFocused,
     required this.passwordFocused,
     required this.confirmFocused,
+    required this.canRegister,
     required this.onNameFocus,
     required this.onEmailFocus,
     required this.onPasswordFocus,
@@ -394,7 +422,7 @@ class _RegisterCard extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: onSubmit,
+                      onPressed: canRegister ? onSubmit : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.primary,
                         foregroundColor: colorScheme.onPrimary,

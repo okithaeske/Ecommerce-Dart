@@ -25,6 +25,10 @@ class _LoginScreenState extends State<LoginScreen>
       vsync: this,
       duration: const Duration(milliseconds: 700),
     )..forward();
+
+    // Rebuild the UI when text changes to update the button
+    widget.emailController.addListener(() => setState(() {}));
+    widget.passwordController.addListener(() => setState(() {}));
   }
 
   @override
@@ -34,6 +38,11 @@ class _LoginScreenState extends State<LoginScreen>
     widget.passwordController.dispose();
     super.dispose();
   }
+
+  // Check if both fields have values
+  bool get canLogin =>
+      widget.emailController.text.trim().isNotEmpty &&
+      widget.passwordController.text.trim().isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -70,109 +79,110 @@ class _LoginScreenState extends State<LoginScreen>
           // Responsive Layout
           isWide
               ? Row(
-                children: [
-                  // Left: Brand / Hero Image panel
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceVariant,
-                        image: const DecorationImage(
-                          image: AssetImage(
-                            'assets/images/hero_watchproduct.jpg',
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                  children: [
+                    // Left: Brand / Hero Image panel
+                    Expanded(
+                      flex: 2,
                       child: Container(
-                        color: Colors.black.withOpacity(0.38),
-                        child: Center(
-                          child: Text(
-                            'ZENATARA\nLUXURY WATCHES',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.93),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 34,
-                              letterSpacing: 2.5,
-                              height: 1.15,
-                              shadows: [
-                                Shadow(color: Colors.black45, blurRadius: 6),
-                              ],
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceVariant,
+                          image: const DecorationImage(
+                            image: AssetImage(
+                              'assets/images/hero_watchproduct.jpg',
                             ),
-                            textAlign: TextAlign.center,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Container(
+                          color: Colors.black.withOpacity(0.38),
+                          child: Center(
+                            child: Text(
+                              'ZENATARA\nLUXURY WATCHES',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.93),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 34,
+                                letterSpacing: 2.5,
+                                height: 1.15,
+                                shadows: [
+                                  Shadow(color: Colors.black45, blurRadius: 6),
+                                ],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  // Right: Login Card - make sure it's scrollable!
-                  Expanded(
-                    flex: 3,
-                    child: Center(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 42.0,
-                          vertical: 34,
+                    // Right: Login Card - make sure it's scrollable!
+                    Expanded(
+                      flex: 3,
+                      child: Center(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 42.0,
+                            vertical: 34,
+                          ),
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 420),
+                            child: _LoginCard(
+                              fadeController: _fadeController,
+                              emailController: widget.emailController,
+                              passwordController: widget.passwordController,
+                              obscurePassword: _obscurePassword,
+                              emailFocused: _emailFocused,
+                              passwordFocused: _passwordFocused,
+                              canLogin: canLogin,
+                              onEmailFocus:
+                                  (v) => setState(() => _emailFocused = v),
+                              onPasswordFocus:
+                                  (v) => setState(() => _passwordFocused = v),
+                              onTogglePassword:
+                                  () => setState(
+                                        () => _obscurePassword = !_obscurePassword,
+                                      ),
+                              onSubmit: () => _submit(context),
+                            ),
+                          ),
                         ),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 420),
-                          child: _LoginCard(
-                            fadeController: _fadeController,
-                            emailController: widget.emailController,
-                            passwordController: widget.passwordController,
-                            obscurePassword: _obscurePassword,
-                            emailFocused: _emailFocused,
-                            passwordFocused: _passwordFocused,
-                            onEmailFocus:
-                                (v) => setState(() => _emailFocused = v),
-                            onPasswordFocus:
-                                (v) => setState(() => _passwordFocused = v),
-                            onTogglePassword:
-                                () => setState(
+                      ),
+                    ),
+                  ],
+                )
+              : Center(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                      vertical: 24,
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      child: _LoginCard(
+                        fadeController: _fadeController,
+                        emailController: widget.emailController,
+                        passwordController: widget.passwordController,
+                        obscurePassword: _obscurePassword,
+                        emailFocused: _emailFocused,
+                        passwordFocused: _passwordFocused,
+                        canLogin: canLogin,
+                        onEmailFocus: (v) => setState(() => _emailFocused = v),
+                        onPasswordFocus:
+                            (v) => setState(() => _passwordFocused = v),
+                        onTogglePassword:
+                            () => setState(
                                   () => _obscurePassword = !_obscurePassword,
                                 ),
-                            onSubmit: () => _submit(context),
-                          ),
-                        ),
+                        onSubmit: () => _submit(context),
                       ),
-                    ),
-                  ),
-                ],
-              )
-              : Center(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding,
-                    vertical: 24,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 420),
-                    child: _LoginCard(
-                      fadeController: _fadeController,
-                      emailController: widget.emailController,
-                      passwordController: widget.passwordController,
-                      obscurePassword: _obscurePassword,
-                      emailFocused: _emailFocused,
-                      passwordFocused: _passwordFocused,
-                      onEmailFocus: (v) => setState(() => _emailFocused = v),
-                      onPasswordFocus:
-                          (v) => setState(() => _passwordFocused = v),
-                      onTogglePassword:
-                          () => setState(
-                            () => _obscurePassword = !_obscurePassword,
-                          ),
-                      onSubmit: () => _submit(context),
                     ),
                   ),
                 ),
-              ),
         ],
       ),
     );
   }
 
   void _submit(BuildContext context) {
-    // Add validation/authentication logic here if needed
     Navigator.pushReplacementNamed(context, AppRoutes.home);
   }
 }
@@ -185,6 +195,7 @@ class _LoginCard extends StatelessWidget {
   final bool obscurePassword;
   final bool emailFocused;
   final bool passwordFocused;
+  final bool canLogin;
   final ValueChanged<bool> onEmailFocus;
   final ValueChanged<bool> onPasswordFocus;
   final VoidCallback onTogglePassword;
@@ -197,6 +208,7 @@ class _LoginCard extends StatelessWidget {
     required this.obscurePassword,
     required this.emailFocused,
     required this.passwordFocused,
+    required this.canLogin,
     required this.onEmailFocus,
     required this.onPasswordFocus,
     required this.onTogglePassword,
@@ -323,14 +335,36 @@ class _LoginCard extends StatelessWidget {
                         filled: true,
                       ),
                       textInputAction: TextInputAction.done,
-                      onSubmitted: (_) => onSubmit(),
+                      onSubmitted: (_) {
+                        if (canLogin) {
+                          onSubmit();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Both email and password are required.'),
+                              backgroundColor: Colors.redAccent,
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: onSubmit,
+                      onPressed: canLogin
+                          ? onSubmit
+                          : () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Both email and password are required.'),
+                                  backgroundColor: Colors.redAccent,
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.primary,
                         foregroundColor: colorScheme.onPrimary,
