@@ -52,15 +52,24 @@ class _HomeScreenState extends State<Home> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+ @override
+Widget build(BuildContext context) {
+  final colorScheme = Theme.of(context).colorScheme;
 
-    return GestureDetector(
-      // Listen for taps and pans anywhere
-      behavior: HitTestBehavior.translucent,
-      onTap: _onUserInteraction,
-      onPanDown: (_) => _onUserInteraction(),
+  return GestureDetector(
+    behavior: HitTestBehavior.translucent,
+    onTap: _onUserInteraction,
+    onPanDown: (_) => _onUserInteraction(),
+    child: WillPopScope(
+      onWillPop: () async {
+        if (_selectedIndex > 0) {
+          setState(() {
+            _selectedIndex = 0; // Go to Home tab (or _selectedIndex - 1 for "previous" behavior)
+          });
+          return false; // Prevent the app from exiting
+        }
+        return true; // Exit the app
+      },
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: colorScheme.surface,
@@ -85,26 +94,26 @@ class _HomeScreenState extends State<Home> {
           ],
         ),
         body: _pages[_selectedIndex],
-        bottomNavigationBar:
-            _showNavBar
-                ? AnimatedSlide(
-                  duration: const Duration(milliseconds: 350),
-                  offset: Offset(0, 0),
-                  curve: Curves.easeInOut,
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 300),
-                    opacity: 1.0,
-                    child: CustomBottomNavBar(
-                      currentIndex: _selectedIndex,
-                      onTap: (index) {
-                        _onUserInteraction();
-                        setState(() => _selectedIndex = index);
-                      },
-                    ),
+        bottomNavigationBar: _showNavBar
+            ? AnimatedSlide(
+                duration: const Duration(milliseconds: 350),
+                offset: Offset(0, 0),
+                curve: Curves.easeInOut,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 300),
+                  opacity: 1.0,
+                  child: CustomBottomNavBar(
+                    currentIndex: _selectedIndex,
+                    onTap: (index) {
+                      _onUserInteraction();
+                      setState(() => _selectedIndex = index);
+                    },
                   ),
-                )
-                : null,
+                ),
+              )
+            : null,
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -327,7 +327,7 @@ class ShopLocationsSection extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

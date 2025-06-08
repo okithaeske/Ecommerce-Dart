@@ -70,7 +70,7 @@ class ProductScreen extends StatelessWidget {
     else if (width > 700) crossAxisCount = 3;
 
     // Dynamic product card aspect ratio
-    double aspectRatio = isLandscape ? 0.95 : 0.6;
+    double aspectRatio = isLandscape ? 0.75 : 0.65;
     double gridSpacing = isLandscape ? 32 : 18;
 
     // Hero height cap
@@ -110,7 +110,7 @@ class ProductScreen extends StatelessWidget {
                         color: colorScheme.onBackground,
                       ),
                     ),
-                    const Spacer(),
+                    SizedBox(height: 8,),
                     ElevatedButton.icon(
                       onPressed: onCartTap ?? () {},
                       icon: const Icon(Icons.shopping_cart_outlined, size: 18),
@@ -410,16 +410,17 @@ class _ProductCard extends StatelessWidget {
       },
       borderRadius: BorderRadius.circular(16),
       child: Card(
-        elevation: 11,
+        elevation: 7,
         color: colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              buildHeroImage(imagePath, accent, height: 90), // <-- Styled!
-              const SizedBox(height: 8),
+              buildHeroImage(imagePath, accent, height: 82),
+              const SizedBox(height: 6),
               Text(
                 name,
                 style: textTheme.titleSmall?.copyWith(
@@ -438,6 +439,7 @@ class _ProductCard extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              const SizedBox(height: 6),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -453,7 +455,7 @@ class _ProductCard extends StatelessWidget {
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 0,
-                      vertical: 10,
+                      vertical: 8,
                     ),
                     textStyle: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,

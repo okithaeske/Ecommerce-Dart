@@ -513,22 +513,19 @@ class _WatchCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  // Go to cart page (replace with your cart route)
-                  Navigator.pushNamed(context, ProductScreen() as String );
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accent,
                   foregroundColor: Colors.black,
                   elevation: 1,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-                  padding: const EdgeInsets.symmetric(vertical: 9),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   textStyle: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 child: const Text('Shop Now'),
               ),
             ),
-            const SizedBox(height: 7),
+            const SizedBox(height: 4),
           ],
         ),
       ),

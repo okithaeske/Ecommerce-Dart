@@ -437,14 +437,14 @@ class AboutScreen extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 0),
       child: Card(
         color: colorScheme.surface,
         elevation: 3,
         shadowColor: accent.withOpacity(0.13),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(6.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
