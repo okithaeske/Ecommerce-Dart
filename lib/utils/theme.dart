@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 
 @immutable
 class CustomColors extends ThemeExtension<CustomColors> {
-  final Color heroTextColor;
   final Color promoTextColor;
+  final Color heroTextColor;
 
   const CustomColors({
-    required this.heroTextColor,
     required this.promoTextColor,
+    required this.heroTextColor,
   });
 
   @override
-  CustomColors copyWith({Color? heroTextColor, Color? promoTextColor}) {
+  CustomColors copyWith({
+    Color? promoTextColor,
+    Color? heroTextColor,
+  }) {
     return CustomColors(
-      heroTextColor: heroTextColor ?? this.heroTextColor,
       promoTextColor: promoTextColor ?? this.promoTextColor,
+      heroTextColor: heroTextColor ?? this.heroTextColor,
     );
   }
 
@@ -22,8 +25,8 @@ class CustomColors extends ThemeExtension<CustomColors> {
   CustomColors lerp(ThemeExtension<CustomColors>? other, double t) {
     if (other is! CustomColors) return this;
     return CustomColors(
-      heroTextColor: Color.lerp(heroTextColor, other.heroTextColor, t)!,
       promoTextColor: Color.lerp(promoTextColor, other.promoTextColor, t)!,
+      heroTextColor: Color.lerp(heroTextColor, other.heroTextColor, t)!,
     );
   }
 }

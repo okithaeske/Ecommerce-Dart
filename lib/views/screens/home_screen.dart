@@ -109,7 +109,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 240,
+            height: 260,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: watches.length,
@@ -178,8 +178,8 @@ class HomeScreen extends StatelessWidget {
     TextTheme textTheme,
     double width,
   ) {
-    final customColors = Theme.of(context).extension<CustomColors>()!;
-    final promoTextColor = customColors.promoTextColor;
+    final customColors = Theme.of(context).extension<CustomColors>();
+    final promoTextColor = customColors?.promoTextColor ?? Colors.white;
     return Container(
       height: width < 500 ? 120 : 180,
       margin: const EdgeInsets.symmetric(vertical: 16),
@@ -424,8 +424,8 @@ class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner>
 
   @override
   Widget build(BuildContext context) {
-    final customColors = Theme.of(context).extension<CustomColors>()!;
-    final heroTextColor = customColors.heroTextColor;
+    final customColors = Theme.of(context).extension<CustomColors>();
+    final heroTextColor = customColors?.promoTextColor ?? Colors.white;
     return Semantics(
       label: "Hero banner with luxury watch background",
       child: Container(
