@@ -60,35 +60,41 @@ class ProductScreen extends StatelessWidget {
 
     // Device size/landscape logic
     final size = MediaQuery.of(context).size;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     double width = size.width;
 
     // Dynamic columns: phone = 2, tab = 3, large = 4, desktop = 5+
     int crossAxisCount = 2;
-    if (width > 1350) crossAxisCount = 5;
-    else if (width > 1100) crossAxisCount = 4;
-    else if (width > 700) crossAxisCount = 3;
+    if (width > 1350)
+      crossAxisCount = 5;
+    else if (width > 1100)
+      crossAxisCount = 4;
+    else if (width > 700)
+      crossAxisCount = 3;
 
     // Dynamic product card aspect ratio
     double aspectRatio = isLandscape ? 0.75 : 0.65;
     double gridSpacing = isLandscape ? 32 : 18;
 
     // Hero height cap
-    final heroHeight = isLandscape
-        ? (size.height * 0.32).clamp(210, 350).toDouble()
-        : (size.height * 0.44);
+    final heroHeight =
+        isLandscape
+            ? (size.height * 0.32).clamp(210, 350).toDouble()
+            : (size.height * 0.44);
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      floatingActionButton: width > 900
-          ? FloatingActionButton.extended(
-              backgroundColor: accent,
-              foregroundColor: Colors.black,
-              icon: const Icon(Icons.shopping_cart_outlined),
-              label: Text("Cart ($cartCount)"),
-              onPressed: onCartTap ?? () {},
-            )
-          : null,
+      floatingActionButton:
+          width > 900
+              ? FloatingActionButton.extended(
+                backgroundColor: accent,
+                foregroundColor: Colors.black,
+                icon: const Icon(Icons.shopping_cart_outlined),
+                label: Text("Cart ($cartCount)"),
+                onPressed: onCartTap ?? () {},
+              )
+              : null,
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -99,7 +105,10 @@ class ProductScreen extends StatelessWidget {
           if (width <= 900)
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
                 child: Row(
                   children: [
                     Text(
@@ -110,7 +119,7 @@ class ProductScreen extends StatelessWidget {
                         color: colorScheme.onBackground,
                       ),
                     ),
-                    SizedBox(height: 8,),
+                    SizedBox(height: 8),
                     ElevatedButton.icon(
                       onPressed: onCartTap ?? () {},
                       icon: const Icon(Icons.shopping_cart_outlined, size: 18),
@@ -145,19 +154,16 @@ class ProductScreen extends StatelessWidget {
                 mainAxisSpacing: gridSpacing + 8,
                 childAspectRatio: aspectRatio,
               ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final p = products[index];
-                  return _ProductCard(
-                    name: p['name']!,
-                    price: p['price']!,
-                    imagePath: p['image']!,
-                    colorScheme: colorScheme,
-                    textTheme: textTheme,
-                  );
-                },
-                childCount: products.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final p = products[index];
+                return _ProductCard(
+                  name: p['name']!,
+                  price: p['price']!,
+                  imagePath: p['image']!,
+                  colorScheme: colorScheme,
+                  textTheme: textTheme,
+                );
+              }, childCount: products.length),
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
@@ -167,63 +173,64 @@ class ProductScreen extends StatelessWidget {
   }
 
   // ---- Hero Banner + Editorial Tiles ----
-Widget _herobanner(
-  BuildContext context,
-  ColorScheme colorScheme,
-  TextTheme textTheme,
-  double heroHeight,
-) {
-  final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+  Widget _herobanner(
+    BuildContext context,
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    double heroHeight,
+  ) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
-  return Column(
-    children: [
-      // --- Hero Section ---
-      SizedBox(
-        height: heroHeight,
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.asset(
-                    'assets/images/hero_watchproduct.jpg',
-                    fit: BoxFit.cover,
-                  ),
-                  Container(color: Colors.black.withOpacity(0.68)),
-                  Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Gc\nTECHNOCLASS',
-                          style: textTheme.headlineSmall?.copyWith(
-                            color: colorScheme.onPrimary,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 2,
-                            height: 1.12,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'A statement of Unique Sport-Tech',
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onPrimary.withOpacity(0.83),
-                            fontStyle: FontStyle.italic,
-                            letterSpacing: 1.1,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+    return Column(
+      children: [
+        // --- Hero Section ---
+        SizedBox(
+          height: heroHeight,
+          child: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.asset(
+                      'assets/images/hero_watchproduct.jpg',
+                      fit: BoxFit.cover,
                     ),
-                  ),
-                ],
+                    Container(color: Colors.black.withOpacity(0.68)),
+                    Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Gc\nTECHNOCLASS',
+                            style: textTheme.headlineSmall?.copyWith(
+                              color: colorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 2,
+                              height: 1.12,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'A statement of Unique Sport-Tech',
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onPrimary.withOpacity(0.83),
+                              fontStyle: FontStyle.italic,
+                              letterSpacing: 1.1,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
               if (!isLandscape) ...[
                 Expanded(
                   flex: 1,
@@ -247,7 +254,7 @@ Widget _herobanner(
                     ),
                   ),
                 ),
-              ]
+              ],
             ],
           ),
         ),
@@ -413,37 +420,47 @@ class _ProductCard extends StatelessWidget {
         elevation: 7,
         color: colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
+        child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          height: 240, // You can make this dynamic if needed
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              buildHeroImage(imagePath, accent, height: 82),
-              const SizedBox(height: 6),
-              Text(
-                name,
-                style: textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: colorScheme.onSurface,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                price,
-                style: textTheme.titleMedium?.copyWith(
-                  color: accent,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Column(
+                  children: [
+                    buildHeroImage(imagePath, accent, height: 82),
+                    const SizedBox(height: 6),
+                    Text(
+                      name,
+                      style: textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: colorScheme.onSurface,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      price,
+                      style: textTheme.titleMedium?.copyWith(
+                        color: accent,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 6),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Added to cart!')),
+                    );
+                  },
                   icon: const Icon(Icons.shopping_cart_outlined, size: 17),
                   label: const Text("Add to Cart"),
                   style: ElevatedButton.styleFrom(
@@ -454,7 +471,6 @@ class _ProductCard extends StatelessWidget {
                     ),
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 0,
                       vertical: 8,
                     ),
                     textStyle: textTheme.bodyMedium?.copyWith(
@@ -470,3 +486,4 @@ class _ProductCard extends StatelessWidget {
     );
   }
 }
+
