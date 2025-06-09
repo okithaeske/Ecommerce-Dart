@@ -457,7 +457,7 @@ class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner>
                 Text(
                   "Discover exceptional watches for every moment.",
                   style: widget.textTheme.bodyMedium?.copyWith(
-                    color: widget.colorScheme.onPrimary.withOpacity(0.9),
+                    color: heroTextColor.withOpacity(0.9),
                   ),
                 ),
                 const SizedBox(height: 16),

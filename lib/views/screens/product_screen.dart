@@ -208,7 +208,7 @@ class ProductScreen extends StatelessWidget {
                           Text(
                             'Gc\nTECHNOCLASS',
                             style: textTheme.headlineSmall?.copyWith(
-                              color: colorScheme.onPrimary,
+                              color: colorScheme.onSurface,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 2,
                               height: 1.12,
@@ -218,7 +218,7 @@ class ProductScreen extends StatelessWidget {
                           Text(
                             'A statement of Unique Sport-Tech',
                             style: textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onPrimary.withOpacity(0.83),
+                              color: colorScheme.onSurface.withOpacity(0.83),
                               fontStyle: FontStyle.italic,
                               letterSpacing: 1.1,
                             ),
