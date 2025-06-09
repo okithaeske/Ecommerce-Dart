@@ -102,7 +102,7 @@ class AboutScreen extends StatelessWidget {
           child: SizedBox(
             height: heroHeight,
             width: double.infinity,
-            child: Image.asset('assets/images/hero_watch.jpg', fit: BoxFit.cover),
+            child: Image.asset('assets/images/heroabt.jpg', fit: BoxFit.cover),
           ),
         ),
         Container(

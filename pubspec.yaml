@@ -88,6 +88,8 @@ flutter:
     - assets/images/panerai.jpg
     - assets/images/hero_watchContact.jpg
     - assets/images/preview_map.png
+    - assets/images/heroabt.jpg
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
