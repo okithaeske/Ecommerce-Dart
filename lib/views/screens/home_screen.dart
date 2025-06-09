@@ -541,7 +541,6 @@ class _WatchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Preview or show product detail
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Preview: $name')));
@@ -549,6 +548,7 @@ class _WatchCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         width: width,
+        height: 260, // Set a consistent height for the card
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
           color: colorScheme.surface,
@@ -560,15 +560,12 @@ class _WatchCard extends StatelessWidget {
             ),
           ],
         ),
+        padding: const EdgeInsets.all(10),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            buildHeroImage(
-              imagePath,
-              accent,
-              height: 110,
-            ), // Use your luxury image style!
-            const SizedBox(height: 8),
+            buildHeroImage(imagePath, accent, height: 110),
+            const SizedBox(height: 6),
             Text(
               name,
               style: textTheme.bodyLarge?.copyWith(
@@ -576,13 +573,15 @@ class _WatchCard extends StatelessWidget {
                 color: colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             Text(
               price,
               style: textTheme.bodyMedium?.copyWith(color: accent),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 10),
+            const Spacer(), // Pushes button to the bottom
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -602,7 +601,6 @@ class _WatchCard extends StatelessWidget {
                 child: const Text('Shop Now'),
               ),
             ),
-            const SizedBox(height: 4),
           ],
         ),
       ),

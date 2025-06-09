@@ -119,7 +119,7 @@ class ProductScreen extends StatelessWidget {
                         color: colorScheme.onBackground,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    Spacer(),
                     ElevatedButton.icon(
                       onPressed: onCartTap ?? () {},
                       icon: const Icon(Icons.shopping_cart_outlined, size: 18),
@@ -407,11 +407,12 @@ class _ProductCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => ProductDetailScreen(
-              name: name,
-              price: price,
-              imagePath: imagePath,
-            ),
+            builder:
+                (_) => ProductDetailScreen(
+                  name: name,
+                  price: price,
+                  imagePath: imagePath,
+                ),
           ),
         );
       },
@@ -470,9 +471,7 @@ class _ProductCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     elevation: 0,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     textStyle: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -486,4 +485,3 @@ class _ProductCard extends StatelessWidget {
     );
   }
 }
-
