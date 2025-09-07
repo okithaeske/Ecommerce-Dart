@@ -60,15 +60,14 @@ Widget build(BuildContext context) {
     behavior: HitTestBehavior.translucent,
     onTap: _onUserInteraction,
     onPanDown: (_) => _onUserInteraction(),
-    child: WillPopScope(
-      onWillPop: () async {
-        if (_selectedIndex > 0) {
+    child: PopScope(
+      canPop: _selectedIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && _selectedIndex > 0) {
           setState(() {
-            _selectedIndex = 0; // Go to Home tab (or _selectedIndex - 1 for "previous" behavior)
+            _selectedIndex = 0; // Go to Home tab
           });
-          return false; // Prevent the app from exiting
         }
-        return true; // Exit the app
       },
       child: Scaffold(
         appBar: AppBar(

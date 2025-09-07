@@ -6,7 +6,6 @@ class ContactUsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final accent = colorScheme.primary;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -116,7 +115,7 @@ class _ContactHeroBannerState extends State<ContactHeroBanner> with SingleTicker
             width: double.infinity,
             height: 210,
             decoration: BoxDecoration(
-              color: colorScheme.surfaceVariant,
+              color: colorScheme.surfaceContainerHighest,
               image: const DecorationImage(
                 image: AssetImage('assets/images/hero_watchContact.jpg'),
                 fit: BoxFit.cover,
@@ -178,15 +177,15 @@ class _ContactFormCardState extends State<ContactFormCard> {
               const SizedBox(height: 8),
               Text(
                 "Leave us a message and our team will get back to you soon.",
-                style: textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.7),
-                ),
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
               ),
               const SizedBox(height: 16),
               TextField(
                 decoration: InputDecoration(
                   labelText: "Your Name",
-                  labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.8)),
+                  labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8)),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
@@ -194,7 +193,7 @@ class _ContactFormCardState extends State<ContactFormCard> {
               TextField(
                 decoration: InputDecoration(
                   labelText: "Your Email",
-                  labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.8)),
+                  labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8)),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 keyboardType: TextInputType.emailAddress,
@@ -204,7 +203,7 @@ class _ContactFormCardState extends State<ContactFormCard> {
                 maxLines: 4,
                 decoration: InputDecoration(
                   labelText: "Message",
-                  labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.8)),
+                  labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8)),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
@@ -214,8 +213,8 @@ class _ContactFormCardState extends State<ContactFormCard> {
                   Checkbox(
                     value: _agreed,
                     onChanged: (v) => setState(() => _agreed = v ?? false),
-                    activeColor: accent,
-                    side: BorderSide(color: accent),
+                    activeColor: colorScheme.primary,
+                    side: BorderSide(color: colorScheme.primary),
                   ),
                   Expanded(
                     child: Text(
@@ -239,9 +238,9 @@ class _ContactFormCardState extends State<ContactFormCard> {
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: accent,
+                    backgroundColor: colorScheme.primary,
                     foregroundColor: Colors.black,
-                    disabledBackgroundColor: accent.withOpacity(0.45),
+                    disabledBackgroundColor: colorScheme.primary.withValues(alpha: 0.45),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -304,7 +303,7 @@ class ContactDetailsSection extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return Row(
       children: [
-        Icon(icon, color: accent),
+        Icon(icon, color: colorScheme.primary),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
@@ -331,18 +330,18 @@ class ShopLocationsSection extends StatelessWidget {
         children: [
           Text(
             "Shop Locations",
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: accent),
+            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.primary),
           ),
           const SizedBox(height: 8),
           Card(
-            color: colorScheme.surfaceVariant,
+            color: colorScheme.surfaceContainerHighest,
             elevation: 0,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  Icon(Icons.place, color: accent),
+                  Icon(Icons.place, color: colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
                     "Colombo | Kandy | Galle",
@@ -400,7 +399,7 @@ class NewsletterSection extends StatelessWidget {
             "Subscribe to our newsletter for updates & offers!",
             style: textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
@@ -411,7 +410,7 @@ class NewsletterSection extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: "Enter your email",
                     hintStyle: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurface.withOpacity(0.5),
+                      color: colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                     contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
@@ -427,7 +426,7 @@ class NewsletterSection extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: accent,
+                  backgroundColor: colorScheme.primary,
                   foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 18),

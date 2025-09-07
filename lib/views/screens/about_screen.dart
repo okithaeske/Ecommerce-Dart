@@ -78,7 +78,7 @@ class AboutScreen extends StatelessWidget {
         }
 
         return Scaffold(
-          backgroundColor: colorScheme.background,
+          backgroundColor: colorScheme.surface,
           body: SafeArea(
             child: SingleChildScrollView(
               padding: mainPadding,
@@ -109,9 +109,9 @@ class AboutScreen extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.black.withOpacity(0.7),
+                Colors.black.withValues(alpha: 0.7),
                 Colors.transparent,
-                Colors.black.withOpacity(0.6),
+                Colors.black.withValues(alpha: 0.6),
               ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -137,7 +137,7 @@ class AboutScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Text(
@@ -190,11 +190,11 @@ class AboutScreen extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 12),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.10),
+            color: Colors.black.withValues(alpha: 0.10),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -238,11 +238,11 @@ class AboutScreen extends StatelessWidget {
         padding: const EdgeInsets.only(left: 10, top: 6),
         child: Text(
           "Founded in the heart of Colombo, Zentara was born out of a passion for precision and a vision to redefine modern luxury. Each piece we craft tells a tale of heritage, innovation, and artistry — where tradition meets timeless beauty.",
-          style: textTheme.bodyMedium?.copyWith(
-            color: colorScheme.onBackground,
-            fontSize: 14,
-            height: 1.4,
-          ),
+                       style: textTheme.bodyMedium?.copyWith(
+                         color: colorScheme.onSurface,
+                         fontSize: 14,
+                         height: 1.4,
+                       ),
         ),
       ),
     );
@@ -255,7 +255,7 @@ class AboutScreen extends StatelessWidget {
           Text(
             "Our Story",
             style: textTheme.titleLarge?.copyWith(
-              color: accent,
+              color: colorScheme.primary,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.3,
             ),
@@ -268,11 +268,11 @@ class AboutScreen extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       "Founded in the heart of Colombo, Zentara was born out of a passion for precision and a vision to redefine modern luxury. Each piece we craft tells a tale of heritage, innovation, and artistry — where tradition meets timeless beauty.",
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onBackground,
-                        fontSize: 14,
-                        height: 1.4,
-                      ),
+                       style: textTheme.bodyMedium?.copyWith(
+                         color: colorScheme.onSurface,
+                         fontSize: 14,
+                         height: 1.4,
+                       ),
                     ),
                   ],
                 )
@@ -294,7 +294,7 @@ class AboutScreen extends StatelessWidget {
       child: Card(
         color: colorScheme.surface,
         elevation: 3,
-        shadowColor: accent.withOpacity(0.15),
+        shadowColor: colorScheme.primary.withValues(alpha: 0.15),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         child: Padding(
           padding: const EdgeInsets.all(14.0),
@@ -351,7 +351,7 @@ class AboutScreen extends StatelessWidget {
           Text(
             "Meet Our Team",
             style: textTheme.titleMedium?.copyWith(
-              color: accent,
+              color: colorScheme.primary,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.2,
             ),
@@ -393,7 +393,7 @@ class AboutScreen extends StatelessWidget {
           Text(
             "Our Mission",
             style: textTheme.titleSmall?.copyWith(
-              color: accent,
+              color: colorScheme.primary,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
             ),
@@ -402,7 +402,7 @@ class AboutScreen extends StatelessWidget {
           Text(
             "To deliver timeless luxury through precision, elegance, and innovation.",
             style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
               fontSize: 13,
               height: 1.4,
             ),
@@ -411,7 +411,7 @@ class AboutScreen extends StatelessWidget {
           Text(
             "Our Vision",
             style: textTheme.titleSmall?.copyWith(
-              color: accent,
+              color: colorScheme.primary,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
             ),
@@ -420,7 +420,7 @@ class AboutScreen extends StatelessWidget {
           Text(
             "To be the world's most trusted and admired luxury timepiece brand.",
             style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
               fontSize: 13,
               height: 1.4,
             ),
@@ -439,7 +439,7 @@ class AboutScreen extends StatelessWidget {
       child: Card(
         color: colorScheme.surface,
         elevation: 3,
-        shadowColor: accent.withOpacity(0.13),
+        shadowColor: colorScheme.primary.withValues(alpha: 0.13),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         child: Padding(
           padding: const EdgeInsets.all(6.0),
@@ -449,14 +449,14 @@ class AboutScreen extends StatelessWidget {
               Text(
                 "Contact Us",
                 style: textTheme.titleMedium?.copyWith(
-                  color: accent,
+                  color: colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Icon(Icons.email, color: accent, size: 18),
+                  Icon(Icons.email, color: colorScheme.primary, size: 18),
                   const SizedBox(width: 8),
                   Text(
                     "support@zentara.com",
@@ -470,7 +470,7 @@ class AboutScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  Icon(Icons.phone, color: accent, size: 18),
+                  Icon(Icons.phone, color: colorScheme.primary, size: 18),
                   const SizedBox(width: 8),
                   Text(
                     "+94 77 123 4567",
@@ -484,7 +484,7 @@ class AboutScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  Icon(Icons.location_on, color: accent, size: 18),
+                  Icon(Icons.location_on, color: colorScheme.primary, size: 18),
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
@@ -540,10 +540,10 @@ class TeamMemberTile extends StatelessWidget {
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: accent, width: 2.5),
+              border: Border.all(color: colorScheme.primary, width: 2.5),
               boxShadow: [
                 BoxShadow(
-                  color: accent.withOpacity(0.13),
+                  color: colorScheme.primary.withValues(alpha: 0.13),
                   blurRadius: 9,
                   spreadRadius: 1,
                 ),
@@ -559,7 +559,7 @@ class TeamMemberTile extends StatelessWidget {
           Text(
             name,
             style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
               fontSize: 12,
             ),
@@ -570,7 +570,7 @@ class TeamMemberTile extends StatelessWidget {
           Text(
             role,
             style: textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurface.withOpacity(0.6),
+              color: colorScheme.onSurface.withValues(alpha: 0.6),
               fontSize: 11,
             ),
             textAlign: TextAlign.center,

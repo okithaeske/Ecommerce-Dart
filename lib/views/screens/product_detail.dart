@@ -116,7 +116,7 @@ class ProductDetailScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
           name,

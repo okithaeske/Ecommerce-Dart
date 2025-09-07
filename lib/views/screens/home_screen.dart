@@ -10,10 +10,10 @@ class HomeScreen extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final width = MediaQuery.of(context).size.width;
-    final accent = colorScheme.primary;
+    
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
     if (width < 420) {
       // Stack in column for narrow screens
       return Container(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -69,7 +69,7 @@ class HomeScreen extends StatelessWidget {
     }
     // Row for normal/tablet
     return Container(
-      color: colorScheme.surfaceVariant,
+      color: colorScheme.surfaceContainerHighest,
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -102,7 +102,7 @@ class HomeScreen extends StatelessWidget {
               "New Arrivals",
               style: textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: colorScheme.onBackground,
+                color: colorScheme.onSurface,
               ),
             ),
           ),
@@ -137,7 +137,7 @@ class HomeScreen extends StatelessWidget {
               "New Arrivals",
               style: textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: colorScheme.onBackground,
+                color: colorScheme.onSurface,
               ),
             ),
           ),
@@ -188,7 +188,7 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       child: Container(
-        color: Colors.black.withOpacity(0.5),
+        color: Colors.black.withValues(alpha: 0.5),
         padding: EdgeInsets.all(width < 400 ? 14 : 24),
         child: Align(
           alignment: Alignment.centerLeft,
@@ -221,7 +221,7 @@ class HomeScreen extends StatelessWidget {
               "Brands We Love",
               style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: colorScheme.onBackground,
+                color: colorScheme.onSurface,
               ),
             ),
           ),
@@ -255,7 +255,7 @@ class HomeScreen extends StatelessWidget {
               "Brands We Love",
               style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: colorScheme.onBackground,
+                color: colorScheme.onSurface,
               ),
             ),
           ),
@@ -305,7 +305,7 @@ class HomeScreen extends StatelessWidget {
               "Testimonials",
               style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: colorScheme.onBackground,
+                color: colorScheme.onSurface,
               ),
             ),
           ),
@@ -335,7 +335,7 @@ class HomeScreen extends StatelessWidget {
             "Testimonials",
             style: textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
             ),
           ),
         ),
@@ -437,7 +437,7 @@ class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner>
         ),
         child: Container(
           padding: const EdgeInsets.all(24),
-          color: Colors.black.withOpacity(0.5),
+          color: Colors.black.withValues(alpha: 0.5),
           child: FadeTransition(
             opacity: _fadeAnim,
             child: Column(
@@ -455,7 +455,7 @@ class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner>
                 Text(
                   "Discover exceptional watches for every moment.",
                   style: widget.textTheme.bodyMedium?.copyWith(
-                    color: heroTextColor.withOpacity(0.9),
+                    color: heroTextColor.withValues(alpha: 0.9),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -464,7 +464,7 @@ class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner>
                     ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: accent,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         foregroundColor: Colors.black,
                         textStyle: const TextStyle(fontWeight: FontWeight.bold),
                         elevation: 1,
@@ -478,8 +478,8 @@ class _AnimatedHeroBannerState extends State<_AnimatedHeroBanner>
                     OutlinedButton(
                       onPressed: () {},
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: accent,
-                        side: const BorderSide(color: accent, width: 1.4),
+                        foregroundColor: Theme.of(context).colorScheme.primary,
+                        side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.4),
                         textStyle: const TextStyle(fontWeight: FontWeight.bold),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -510,7 +510,7 @@ class _FeatureItem extends StatelessWidget {
     return Text(
       label,
       style: textTheme.labelLarge?.copyWith(
-        color: accent,
+        color: Theme.of(context).colorScheme.primary,
         fontWeight: FontWeight.w500,
       ),
     );
@@ -553,7 +553,7 @@ class _WatchCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: colorScheme.shadow.withOpacity(0.04),
+              color: colorScheme.shadow.withValues(alpha: 0.04),
               blurRadius: 4,
             ),
           ],
@@ -562,7 +562,7 @@ class _WatchCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            buildHeroImage(imagePath, accent, height: 110),
+            buildHeroImage(imagePath, colorScheme.primary, height: 110),
             const SizedBox(height: 6),
             Text(
               name,
@@ -576,7 +576,7 @@ class _WatchCard extends StatelessWidget {
             ),
             Text(
               price,
-              style: textTheme.bodyMedium?.copyWith(color: accent),
+              style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary),
               textAlign: TextAlign.center,
             ),
             const Spacer(), // Pushes button to the bottom
@@ -585,7 +585,7 @@ class _WatchCard extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: accent,
+                  backgroundColor: colorScheme.primary,
                   foregroundColor: Colors.black,
                   elevation: 1,
                   shape: RoundedRectangleBorder(
@@ -628,12 +628,12 @@ class _TestimonialCard extends StatelessWidget {
       width: width,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
-          Icon(Icons.watch, size: 40, color: accent),
+          Icon(Icons.watch, size: 40, color: colorScheme.primary),
           const SizedBox(height: 8),
           Text(
             review,

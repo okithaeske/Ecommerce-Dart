@@ -1,5 +1,5 @@
 import 'package:ecommerce/utils/widgets.dart';
-import 'package:ecommerce/views/screens/productDetail.dart';
+import 'package:ecommerce/views/screens/product_detail.dart';
 import 'package:flutter/material.dart';
 
 class ProductScreen extends StatelessWidget {
@@ -65,12 +65,13 @@ class ProductScreen extends StatelessWidget {
 
     // Dynamic columns: phone = 2, tab = 3, large = 4, desktop = 5+
     int crossAxisCount = 2;
-    if (width > 1350)
+    if (width > 1350) {
       crossAxisCount = 5;
-    else if (width > 1100)
+    } else if (width > 1100) {
       crossAxisCount = 4;
-    else if (width > 700)
+    } else if (width > 700) {
       crossAxisCount = 3;
+    }
 
     // Dynamic product card aspect ratio
     double aspectRatio = isLandscape ? 0.75 : 0.65;
@@ -83,7 +84,7 @@ class ProductScreen extends StatelessWidget {
             : (size.height * 0.44);
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       floatingActionButton:
           width > 900
               ? FloatingActionButton.extended(
@@ -115,7 +116,7 @@ class ProductScreen extends StatelessWidget {
                       style: textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.3,
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     Spacer(),
@@ -197,7 +198,7 @@ class ProductScreen extends StatelessWidget {
                       'assets/images/hero_watchproduct.jpg',
                       fit: BoxFit.cover,
                     ),
-                    Container(color: Colors.black.withOpacity(0.68)),
+                    Container(color: Colors.black.withValues(alpha: 0.68)),
                     Padding(
                       padding: const EdgeInsets.all(24.0),
                       child: Column(
@@ -217,7 +218,7 @@ class ProductScreen extends StatelessWidget {
                           Text(
                             'A statement of Unique Sport-Tech',
                             style: textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurface.withOpacity(0.83),
+                              color: colorScheme.onSurface.withValues(alpha: 0.83),
                               fontStyle: FontStyle.italic,
                               letterSpacing: 1.1,
                             ),
@@ -274,7 +275,7 @@ class ProductScreen extends StatelessWidget {
                   image: 'assets/images/moments.jpg',
                   title: 'MOMENTS OF SMART LUXURY',
                   subtitle: 'From the Saddle',
-                  colorOverlay: Colors.black.withOpacity(0.22),
+                  colorOverlay: Colors.black.withValues(alpha: 0.22),
                 ),
               ),
               Expanded(
@@ -337,7 +338,7 @@ class _EditorialTile extends StatelessWidget {
         if (colorOverlay != null)
           Container(color: colorOverlay)
         else
-          Container(color: Colors.black.withOpacity(0.08)),
+          Container(color: Colors.black.withValues(alpha: 0.08)),
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: Align(
