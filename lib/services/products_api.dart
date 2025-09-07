@@ -4,7 +4,7 @@ import '../models/product.dart';
 
 class ProductsApi {
   final String baseUrl;
-  final String? imageBaseUrl; // e.g., https://your-bucket.s3.ap-south-1.amazonaws.com
+  final String? imageBaseUrl;
   final http.Client _client;
 
   ProductsApi({

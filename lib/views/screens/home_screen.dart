@@ -1,9 +1,28 @@
 import 'package:ecommerce/utils/theme.dart';
-import 'package:ecommerce/utils/widgets.dart';
+// import 'package:ecommerce/utils/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:ecommerce/models/product.dart';
+import 'package:ecommerce/services/products_api.dart';
+import 'package:ecommerce/repositories/products_repository.dart';
+import 'package:ecommerce/views/screens/product_detail.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final ProductsRepository _repo;
+  late Future<List<Product>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _repo = ProductsRepository(ProductsApi(baseUrl: 'https://zentara.duckdns.org/api/products'));
+    _future = _repo.getProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,90 +103,99 @@ class HomeScreen extends StatelessWidget {
     TextTheme textTheme,
     double width,
   ) {
-    final watches = [
-      {"name": "ASTRON", "price": "\$52,000"},
-      {"name": "CITIZEN", "price": "\$38,00"},
-      {"name": "OMEGA", "price": "\$102,000"},
-      {"name": "SEIKO", "price": "\$46,200"},
-    ];
-
-    if (width < 600) {
-      // Horizontal list for phones
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
+    final isNarrow = width < 600;
+    return FutureBuilder<List<Product>>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Padding(
+            padding: EdgeInsets.all(24.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasError) {
+          return Padding(
             padding: const EdgeInsets.all(16),
-            child: Text(
-              "New Arrivals",
-              style: textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface,
+            child: Text('Failed to load products', style: textTheme.bodyMedium?.copyWith(color: colorScheme.error)),
+          );
+        }
+        final items = (snapshot.data ?? const <Product>[]).take(6).toList();
+        if (items.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        if (isNarrow) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  "New Arrivals",
+                  style: textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
               ),
-            ),
-          ),
-          SizedBox(
-            height: 260,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: watches.length,
-              itemBuilder: (context, index) {
-                return _WatchCard(
-                  name: watches[index]['name']!,
-                  price: watches[index]['price']!,
-                  imagePath: 'assets/images/watch${index + 1}.jpg',
-                  colorScheme: colorScheme,
-                  textTheme: textTheme,
-                  width: 140,
-                );
-              },
-            ),
-          ),
-        ],
-      );
-    } else {
-      // Responsive grid for wide screens/tablets/web
-      int columns = (width ~/ 220).clamp(2, 4);
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              "New Arrivals",
-              style: textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface,
+              SizedBox(
+                height: 260,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return _NewArrivalCard(
+                      product: items[index],
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                      width: 140,
+                    );
+                  },
+                ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: columns,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 0.8,
+            ],
+          );
+        } else {
+          final columns = (width ~/ 220).clamp(2, 4);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  "New Arrivals",
+                  style: textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
               ),
-              itemCount: watches.length,
-              itemBuilder: (context, index) {
-                return _WatchCard(
-                  name: watches[index]['name']!,
-                  price: watches[index]['price']!,
-                  imagePath: 'assets/images/watch${index + 1}.jpg',
-                  colorScheme: colorScheme,
-                  textTheme: textTheme,
-                  width: width / columns - 28,
-                );
-              },
-            ),
-          ),
-        ],
-      );
-    }
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.8,
+                  ),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return _NewArrivalCard(
+                      product: items[index],
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                      width: width / columns - 28,
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        }
+      },
+    );
   }
 
   Widget _buildPromoSection(
@@ -518,18 +546,14 @@ class _FeatureItem extends StatelessWidget {
 }
 
 // --- Watch Card (responsive width) ---
-class _WatchCard extends StatelessWidget {
-  final String name;
-  final String price;
-  final String imagePath;
+class _NewArrivalCard extends StatelessWidget {
+  final Product product;
   final ColorScheme colorScheme;
   final TextTheme textTheme;
   final double width;
 
-  const _WatchCard({
-    required this.name,
-    required this.price,
-    required this.imagePath,
+  const _NewArrivalCard({
+    required this.product,
     required this.colorScheme,
     required this.textTheme,
     required this.width,
@@ -539,9 +563,17 @@ class _WatchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        ScaffoldMessenger.of(
+        Navigator.push(
           context,
-        ).showSnackBar(SnackBar(content: Text('Preview: $name')));
+          MaterialPageRoute(
+            builder: (_) => ProductDetailScreen(
+              name: product.name,
+              price: product.priceLabel,
+              imagePath: product.imageUrl,
+              description: product.description,
+            ),
+          ),
+        );
       },
       borderRadius: BorderRadius.circular(12),
       child: Container(
@@ -562,10 +594,45 @@ class _WatchCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            buildHeroImage(imagePath, colorScheme.primary, height: 110),
+            Center(
+              child: Hero(
+                tag: product.imageUrl,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(color: colorScheme.primary.withValues(alpha: 0.5), width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colorScheme.primary.withValues(alpha: 0.07),
+                        blurRadius: 13,
+                        spreadRadius: 1,
+                      )
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(18),
+                    child: product.imageUrl.startsWith('http')
+                        ? Image.network(
+                            product.imageUrl,
+                            height: 110,
+                            fit: BoxFit.contain,
+                            errorBuilder: (ctx, err, stack) => Container(
+                              height: 110,
+                              width: 110,
+                              color: Colors.black12,
+                              alignment: Alignment.center,
+                              child: const Icon(Icons.broken_image, size: 22),
+                            ),
+                          )
+                        : Image.asset(product.imageUrl, height: 110, fit: BoxFit.contain),
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(height: 6),
             Text(
-              name,
+              product.name,
               style: textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: colorScheme.onSurface,
@@ -575,7 +642,7 @@ class _WatchCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              price,
+              product.priceLabel,
               style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary),
               textAlign: TextAlign.center,
             ),
