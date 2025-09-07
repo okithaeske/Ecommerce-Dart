@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ProductDetailScreen extends StatelessWidget {
-  final String name, price, imagePath;
+  final String name, price, imagePath, description;
   const ProductDetailScreen({
     super.key,
     required this.name,
     required this.price,
     required this.imagePath,
+    required this.description,
   });
 
   @override
@@ -38,7 +39,20 @@ class ProductDetailScreen extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(18),
-            child: Image.asset(imagePath, height: 210),
+            child: imagePath.startsWith('http')
+                ? Image.network(
+                    imagePath,
+                    height: 210,
+                    fit: BoxFit.cover,
+                    errorBuilder: (ctx, err, stack) => Container(
+                      height: 210,
+                      width: 210,
+                      color: Colors.black12,
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.broken_image, size: 48),
+                    ),
+                  )
+                : Image.asset(imagePath, height: 210),
           ),
         ),
       ),
@@ -80,8 +94,9 @@ class ProductDetailScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              "Discover the craftsmanship and elegance of this timepiece. "
-              "Perfect for both formal and casual wear. Comes with a 2-year warranty.",
+              description.isNotEmpty
+                  ? description
+                  : 'No description available.',
               style: textTheme.bodyLarge?.copyWith(
                 color: colorScheme.onSurface,
                 fontSize: 15.5,

@@ -1,61 +1,40 @@
-import 'package:ecommerce/utils/widgets.dart';
+// import 'package:ecommerce/utils/widgets.dart';
 import 'package:ecommerce/views/screens/product_detail.dart';
+import 'package:ecommerce/models/product.dart';
+import 'package:ecommerce/services/products_api.dart';
+import 'package:ecommerce/repositories/products_repository.dart';
 import 'package:flutter/material.dart';
 
-class ProductScreen extends StatelessWidget {
+class ProductScreen extends StatefulWidget {
   final VoidCallback? onCartTap;
   final int cartCount;
 
   const ProductScreen({super.key, this.onCartTap, this.cartCount = 0});
 
   @override
+  State<ProductScreen> createState() => _ProductScreenState();
+}
+
+class _ProductScreenState extends State<ProductScreen> {
+  late final ProductsRepository _repo;
+  late Future<List<Product>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _repo = ProductsRepository(
+      ProductsApi(
+        baseUrl: 'https://zentara.duckdns.org/api/products',
+      ),
+    );
+    _future = _repo.getProducts();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final accent = colorScheme.primary;
-
-    final products = [
-      {
-        "name": "Patek Philippe Nautilus 5711",
-        "price": "\$3,200,000.00",
-        "image": "assets/images/patek.jpg",
-      },
-      {
-        "name": "Richard Mille RM 11-03",
-        "price": "\$2,300,000.00",
-        "image": "assets/images/richard.jpg",
-      },
-      {
-        "name": "Vacheron Constantin Overseas",
-        "price": "\$1,230,000.00",
-        "image": "assets/images/vacheron.jpg",
-      },
-      {
-        "name": "Jaeger-LeCoultre Reverso",
-        "price": "\$3,290,000.00",
-        "image": "assets/images/jaeger.jpg",
-      },
-      {
-        "name": "Hublot Big Bang Unico",
-        "price": "\$238,700.00",
-        "image": "assets/images/hublot.jpg",
-      },
-      {
-        "name": "Cartier Santos de Cartier",
-        "price": "\$1,276,000.00",
-        "image": "assets/images/cartier.jpg",
-      },
-      {
-        "name": "IWC Portugieser Chronograph",
-        "price": "\$1,120,000.00",
-        "image": "assets/images/iwc.jpg",
-      },
-      {
-        "name": "Panerai Luminor Marina",
-        "price": "\$895,000.00",
-        "image": "assets/images/panerai.jpg",
-      },
-    ];
+    // Products now fetched from API via repository
 
     // Device size/landscape logic
     final size = MediaQuery.of(context).size;
@@ -88,15 +67,25 @@ class ProductScreen extends StatelessWidget {
       floatingActionButton:
           width > 900
               ? FloatingActionButton.extended(
-                backgroundColor: accent,
+                backgroundColor: colorScheme.primary,
                 foregroundColor: Colors.black,
                 icon: const Icon(Icons.shopping_cart_outlined),
-                label: Text("Cart ($cartCount)"),
-                onPressed: onCartTap ?? () {},
+                label: Text("Cart (${widget.cartCount})"),
+                onPressed: widget.onCartTap ?? () {},
               )
               : null,
-      body: CustomScrollView(
-        slivers: [
+      body: FutureBuilder<List<Product>>(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text('Failed to load products'));
+          }
+          final items = snapshot.data ?? const <Product>[];
+          return CustomScrollView(
+          slivers: [
           SliverToBoxAdapter(
             child: _herobanner(context, colorScheme, textTheme, heroHeight),
           ),
@@ -121,11 +110,11 @@ class ProductScreen extends StatelessWidget {
                     ),
                     Spacer(),
                     ElevatedButton.icon(
-                      onPressed: onCartTap ?? () {},
+                      onPressed: widget.onCartTap ?? () {},
                       icon: const Icon(Icons.shopping_cart_outlined, size: 18),
-                      label: Text("Cart ($cartCount)"),
+                      label: Text("Cart (${widget.cartCount})"),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: accent,
+                        backgroundColor: colorScheme.primary,
                         foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -155,19 +144,19 @@ class ProductScreen extends StatelessWidget {
                 childAspectRatio: aspectRatio,
               ),
               delegate: SliverChildBuilderDelegate((context, index) {
-                final p = products[index];
+                final p = items[index];
                 return _ProductCard(
-                  name: p['name']!,
-                  price: p['price']!,
-                  imagePath: p['image']!,
+                  product: p,
                   colorScheme: colorScheme,
                   textTheme: textTheme,
                 );
-              }, childCount: products.length),
+              }, childCount: items.length),
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
+      );
+        },
       ),
     );
   }
@@ -386,16 +375,12 @@ class _EditorialTile extends StatelessWidget {
 
 // -- ProductCard luxury style & fully theme-aware --
 class _ProductCard extends StatelessWidget {
-  final String name;
-  final String price;
-  final String imagePath;
+  final Product product;
   final ColorScheme colorScheme;
   final TextTheme textTheme;
 
   const _ProductCard({
-    required this.name,
-    required this.price,
-    required this.imagePath,
+    required this.product,
     required this.colorScheme,
     required this.textTheme,
   });
@@ -407,12 +392,12 @@ class _ProductCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder:
-                (_) => ProductDetailScreen(
-                  name: name,
-                  price: price,
-                  imagePath: imagePath,
-                ),
+            builder: (_) => ProductDetailScreen(
+              name: product.name,
+              price: product.priceLabel,
+              imagePath: product.imageUrl,
+              description: product.description,
+            ),
           ),
         );
       },
@@ -430,10 +415,45 @@ class _ProductCard extends StatelessWidget {
               Expanded(
                 child: Column(
                   children: [
-                    buildHeroImage(imagePath, colorScheme.primary, height: 82),
+                    Center(
+                      child: Hero(
+                        tag: product.imageUrl,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            border: Border.all(color: colorScheme.primary.withValues(alpha: 0.5), width: 2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorScheme.primary.withValues(alpha: 0.07),
+                                blurRadius: 13,
+                                spreadRadius: 1,
+                              )
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(18),
+                            child: product.imageUrl.startsWith('http')
+                                ? Image.network(
+                                    product.imageUrl,
+                                    height: 82,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (ctx, err, stack) => Container(
+                                      height: 82,
+                                      width: 82,
+                                      color: Colors.black12,
+                                      alignment: Alignment.center,
+                                      child: const Icon(Icons.broken_image, size: 22),
+                                    ),
+                                  )
+                                : Image.asset(product.imageUrl, height: 82, fit: BoxFit.contain),
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 6),
                     Text(
-                      name,
+                      product.name,
                       style: textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                         color: colorScheme.onSurface,
@@ -444,10 +464,10 @@ class _ProductCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      price,
+                      product.priceLabel,
                       style: textTheme.titleMedium?.copyWith(
                          color: colorScheme.primary,
-                        fontWeight: FontWeight.bold,
+                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
