@@ -80,7 +80,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     final horizontalPadding = isWide ? 0.0 : 24.0;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
           // Subtle background gradient
@@ -90,9 +90,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      colorScheme.surfaceVariant.withOpacity(isDark ? 0.25 : 0.20),
-                      colorScheme.primary.withOpacity(0.03),
-                      colorScheme.background,
+                      colorScheme.surfaceContainerHighest.withValues(alpha: isDark ? 0.25 : 0.20),
+                      colorScheme.primary.withValues(alpha: 0.03),
+                      colorScheme.surface,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -110,19 +110,19 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                       flex: 2,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: colorScheme.surfaceVariant,
+                          color: colorScheme.surfaceContainerHighest,
                           image: const DecorationImage(
                             image: AssetImage('assets/images/hero_watchproduct.jpg'),
                             fit: BoxFit.cover,
                           ),
                         ),
                         child: Container(
-                          color: Colors.black.withOpacity(0.38),
+                          color: Colors.black.withValues(alpha: 0.38),
                           child: Center(
                             child: Text(
                               'ZENATARA\nLUXURY WATCHES',
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.93),
+                                color: Colors.white.withValues(alpha: 0.93),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 34,
                                 letterSpacing: 2.5,
@@ -272,11 +272,11 @@ class _RegisterCard extends StatelessWidget {
               size: 80,
               color: nameFocused || emailFocused || passwordFocused || confirmFocused
                   ? colorScheme.primary
-                  : colorScheme.primary.withOpacity(0.8),
+                   : colorScheme.primary.withValues(alpha: 0.8),
               shadows: [
                 if (nameFocused || emailFocused || passwordFocused || confirmFocused)
                   Shadow(
-                    color: colorScheme.primary.withOpacity(0.22),
+                    color: colorScheme.primary.withValues(alpha: 0.22),
                     blurRadius: 18,
                   ),
               ],
@@ -288,7 +288,7 @@ class _RegisterCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.bold,
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 32),
@@ -298,7 +298,7 @@ class _RegisterCard extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18),
             ),
-            shadowColor: colorScheme.primary.withOpacity(0.08),
+            shadowColor: colorScheme.primary.withValues(alpha: 0.08),
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
@@ -311,7 +311,7 @@ class _RegisterCard extends StatelessWidget {
                       style: TextStyle(color: colorScheme.onSurface),
                       decoration: InputDecoration(
                         labelText: "Full Name",
-                        labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.7)),
+                        labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7)),
                         prefixIcon: Icon(Icons.person, color: colorScheme.primary),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -336,7 +336,7 @@ class _RegisterCard extends StatelessWidget {
                       style: TextStyle(color: colorScheme.onSurface),
                       decoration: InputDecoration(
                         labelText: "Email",
-                        labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.7)),
+                        labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7)),
                         prefixIcon: Icon(Icons.email, color: colorScheme.primary),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -361,7 +361,7 @@ class _RegisterCard extends StatelessWidget {
                       style: TextStyle(color: colorScheme.onSurface),
                       decoration: InputDecoration(
                         labelText: "Password",
-                        labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.7)),
+                        labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7)),
                         prefixIcon: Icon(Icons.lock, color: colorScheme.primary),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -394,7 +394,7 @@ class _RegisterCard extends StatelessWidget {
                       style: TextStyle(color: colorScheme.onSurface),
                       decoration: InputDecoration(
                         labelText: "Confirm Password",
-                        labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.7)),
+                        labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7)),
                         prefixIcon: Icon(Icons.lock_outline, color: colorScheme.primary),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -444,7 +444,7 @@ class _RegisterCard extends StatelessWidget {
                       Text(
                         "Already have an account?",
                         style: TextStyle(
-                          color: colorScheme.onBackground.withOpacity(0.7),
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
                           fontSize: 13,
                         ),
                       ),
@@ -469,7 +469,7 @@ class _RegisterCard extends StatelessWidget {
             "© 2025 Zentara Luxury Watches",
             style: TextStyle(
               fontSize: 11,
-              color: colorScheme.onBackground.withOpacity(0.55),
+              color: colorScheme.onSurface.withValues(alpha: 0.55),
               letterSpacing: 1.3,
             ),
           ),

@@ -429,7 +429,7 @@ class _ProductCard extends StatelessWidget {
               Expanded(
                 child: Column(
                   children: [
-                    buildHeroImage(imagePath, accent, height: 82),
+                    buildHeroImage(imagePath, colorScheme.primary, height: 82),
                     const SizedBox(height: 6),
                     Text(
                       name,
@@ -445,7 +445,7 @@ class _ProductCard extends StatelessWidget {
                     Text(
                       price,
                       style: textTheme.titleMedium?.copyWith(
-                        color: accent,
+                         color: colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -463,8 +463,8 @@ class _ProductCard extends StatelessWidget {
                   },
                   icon: const Icon(Icons.shopping_cart_outlined, size: 17),
                   label: const Text("Add to Cart"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: accent,
+                    style: ElevatedButton.styleFrom(
+                    backgroundColor: colorScheme.primary,
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),

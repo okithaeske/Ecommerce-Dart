@@ -8,10 +8,10 @@ Widget buildHeroImage(String imagePath, Color accent, {double height = 90}) {
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: accent.withOpacity(0.5), width: 2),
+          border: Border.all(color: accent.withValues(alpha: 0.5), width: 2),
           boxShadow: [
             BoxShadow(
-              color: accent.withOpacity(0.07),
+              color: accent.withValues(alpha: 0.07),
               blurRadius: 13,
               spreadRadius: 1,
             )

@@ -27,10 +27,10 @@ class ProductDetailScreen extends StatelessWidget {
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: accent.withOpacity(0.5), width: 2),
+            border: Border.all(color: accent.withValues(alpha: 0.5), width: 2),
             boxShadow: [
               BoxShadow(
-                color: accent.withOpacity(0.07),
+                color: accent.withValues(alpha: 0.07),
                 blurRadius: 13,
                 spreadRadius: 1,
               )
@@ -73,7 +73,7 @@ class ProductDetailScreen extends StatelessWidget {
         Card(
           color: colorScheme.surface,
           elevation: 4,
-          shadowColor: accent.withOpacity(0.08),
+          shadowColor: accent.withValues(alpha: 0.08),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

@@ -40,7 +40,7 @@ class CustomBottomNavBar extends StatelessWidget {
               backgroundColor: colorScheme.surface,
               elevation: 0,
               selectedItemColor: colorScheme.primary,
-              unselectedItemColor: colorScheme.onSurface.withOpacity(0.62),
+              unselectedItemColor: colorScheme.onSurface.withValues(alpha: 0.62),
               selectedLabelStyle: TextStyle(
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.1,
@@ -48,7 +48,7 @@ class CustomBottomNavBar extends StatelessWidget {
               ),
               unselectedLabelStyle: TextStyle(
                 fontWeight: FontWeight.normal,
-                color: colorScheme.onSurface.withOpacity(0.68),
+                color: colorScheme.onSurface.withValues(alpha: 0.68),
               ),
               iconSize: isLandscape ? 30 : 24,
               selectedFontSize: showLabels ? 13 : 0,
@@ -116,10 +116,10 @@ class CustomBottomNavBar extends StatelessWidget {
         decoration: selected
             ? BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
-                color: colorScheme.primary.withOpacity(0.11),
+                color: colorScheme.primary.withValues(alpha: 0.11),
                 boxShadow: [
                   BoxShadow(
-                    color: colorScheme.primary.withOpacity(0.11),
+                    color: colorScheme.primary.withValues(alpha: 0.11),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   )
@@ -133,7 +133,7 @@ class CustomBottomNavBar extends StatelessWidget {
               : (isLandscape ? 26 : 22),
           color: selected
               ? colorScheme.primary
-              : colorScheme.onSurface.withOpacity(0.62),
+              : colorScheme.onSurface.withValues(alpha: 0.62),
         ),
       ),
       label: label,
