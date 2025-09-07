@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-const Color accent = Color(0xFFD1B464);
-
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 

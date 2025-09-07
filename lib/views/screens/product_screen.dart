@@ -2,8 +2,6 @@ import 'package:ecommerce/utils/widgets.dart';
 import 'package:ecommerce/views/screens/productDetail.dart';
 import 'package:flutter/material.dart';
 
-const Color accent = Color(0xFFD1B464);
-
 class ProductScreen extends StatelessWidget {
   final VoidCallback? onCartTap;
   final int cartCount;
@@ -14,6 +12,7 @@ class ProductScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final accent = colorScheme.primary;
 
     final products = [
       {

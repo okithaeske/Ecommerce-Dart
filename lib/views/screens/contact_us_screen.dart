@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
-const Color accent = Color(0xFFD1B464); // Brand gold
-
 class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final accent = colorScheme.primary;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: _ResponsiveBody(), // Responsive wrapper
       ),
@@ -20,7 +19,7 @@ class ContactUsScreen extends StatelessWidget {
 
 // --- Responsive switcher: column for mobile, row for landscape/tablet ---
 class _ResponsiveBody extends StatelessWidget {
-  const _ResponsiveBody({super.key});
+  const _ResponsiveBody();
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +107,7 @@ class _ContactHeroBannerState extends State<ContactHeroBanner> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final accent = colorScheme.primary;
     return Semantics(
       label: "Contact Us hero banner with luxury watch background",
       child: Stack(
@@ -284,8 +284,6 @@ class ContactDetailsSection extends StatelessWidget {
   const ContactDetailsSection({super.key});
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
       child: Column(

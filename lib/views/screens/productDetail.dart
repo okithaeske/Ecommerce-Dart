@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-const Color accent = Color(0xFFD1B464); // Brand Gold
-
 class ProductDetailScreen extends StatelessWidget {
   final String name, price, imagePath;
   const ProductDetailScreen({
@@ -15,6 +13,7 @@ class ProductDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final accent = colorScheme.primary;
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     final padding = isLandscape
@@ -53,8 +52,8 @@ class ProductDetailScreen extends StatelessWidget {
             width: 56,
             height: 3,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFe3c77b), accent, Color(0xFFe3c77b)],
+              gradient: LinearGradient(
+                colors: [const Color(0xFFe3c77b), accent, const Color(0xFFe3c77b)],
               ),
               borderRadius: BorderRadius.circular(8),
             ),

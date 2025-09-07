@@ -1,9 +1,6 @@
 import 'package:ecommerce/utils/theme.dart';
 import 'package:ecommerce/utils/widgets.dart';
-import 'package:ecommerce/views/screens/product_screen.dart';
 import 'package:flutter/material.dart';
-
-const Color accent = Color(0xFFD1B464); // Brand gold
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -13,6 +10,7 @@ class HomeScreen extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final width = MediaQuery.of(context).size.width;
+    final accent = colorScheme.primary;
 
     return Scaffold(
       backgroundColor: colorScheme.background,
