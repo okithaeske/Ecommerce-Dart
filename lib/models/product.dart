@@ -13,17 +13,19 @@ class Product {
     required this.description,
   });
 
+  // Simple mapping tailored to zentara API
   factory Product.fromJson(Map<String, dynamic> json) {
-    final id = (json['id'] ?? json['product_id'] ?? json['uuid'] ?? '').toString();
-    final name = (json['name'] ?? json['title'] ?? 'Product').toString();
-    final image = (json['image_url'] ?? json['imageUrl'] ?? json['image'] ?? json['image_path'] ?? json['thumbnail'] ?? '').toString();
+    final id = (json['id'] ?? '').toString();
+    final name = (json['name'] ?? 'Product').toString();
+    final image = (json['image_url'] ?? json['image_path'] ?? '').toString();
     final price = json['price'];
     final desc = (json['description'] ?? '').toString();
     String priceLabel;
     if (price is num) {
       priceLabel = _formatPrice(price.toDouble());
-    } else if (price is String) {
-      priceLabel = price.trim().startsWith(r'$') ? price : '\$$price';
+    } else if (price is String && price.isNotEmpty) {
+      // API returns e.g. "8200.00"; prefix with '$' if not present
+      priceLabel = price.trim().startsWith(r'$') ? price : '\$' + price;
     } else {
       priceLabel = r'$--';
     }
@@ -38,6 +40,7 @@ class Product {
 
   static String _formatPrice(double value) {
     final s = value.toStringAsFixed(2);
-    return '\$$s';
+    return '\$' + s;
   }
 }
+
