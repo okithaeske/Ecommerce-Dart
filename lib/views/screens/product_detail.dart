@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ecommerce/providers/cart_provider.dart';
+import 'package:ecommerce/models/product.dart';
 
 class ProductDetailScreen extends StatelessWidget {
-  final String name, price, imagePath, description;
+  final String id, name, price, imagePath, description;
   const ProductDetailScreen({
     super.key,
+    required this.id,
     required this.name,
     required this.price,
     required this.imagePath,
@@ -121,6 +125,14 @@ class ProductDetailScreen extends StatelessWidget {
               ),
             ),
             onPressed: () {
+              final p = Product(
+                id: id,
+                name: name,
+                priceLabel: price,
+                imageUrl: imagePath,
+                description: description,
+              );
+              context.read<CartProvider>().addProduct(p);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Added to cart!')),
               );

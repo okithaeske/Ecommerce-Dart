@@ -178,7 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisCount: columns,
                     mainAxisSpacing: 16,
                     crossAxisSpacing: 16,
-                    childAspectRatio: 0.8,
+                    // Slightly taller cards to avoid vertical overflow
+                    childAspectRatio: 0.72,
                   ),
                   itemCount: items.length,
                   itemBuilder: (context, index) {
@@ -567,6 +568,7 @@ class _NewArrivalCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (_) => ProductDetailScreen(
+              id: product.id,
               name: product.name,
               price: product.priceLabel,
               imagePath: product.imageUrl,
@@ -578,7 +580,6 @@ class _NewArrivalCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         width: width,
-        height: 260, // Set a consistent height for the card
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
           color: colorScheme.surface,
@@ -591,7 +592,11 @@ class _NewArrivalCard extends StatelessWidget {
           ],
         ),
         padding: const EdgeInsets.all(10),
-        child: Column(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final w = constraints.maxWidth;
+            final imageH = w <= 150 ? 95.0 : 110.0;
+            return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
@@ -615,17 +620,17 @@ class _NewArrivalCard extends StatelessWidget {
                     child: product.imageUrl.startsWith('http')
                         ? Image.network(
                             product.imageUrl,
-                            height: 110,
+                            height: imageH,
                             fit: BoxFit.contain,
                             errorBuilder: (ctx, err, stack) => Container(
-                              height: 110,
-                              width: 110,
+                              height: imageH,
+                              width: imageH,
                               color: Colors.black12,
                               alignment: Alignment.center,
                               child: const Icon(Icons.broken_image, size: 22),
                             ),
                           )
-                        : Image.asset(product.imageUrl, height: 110, fit: BoxFit.contain),
+                        : Image.asset(product.imageUrl, height: imageH, fit: BoxFit.contain),
                   ),
                 ),
               ),
@@ -646,7 +651,7 @@ class _NewArrivalCard extends StatelessWidget {
               style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary),
               textAlign: TextAlign.center,
             ),
-            const Spacer(), // Pushes button to the bottom
+            const Spacer(), // keep button anchored at bottom when space allows
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -667,6 +672,8 @@ class _NewArrivalCard extends StatelessWidget {
               ),
             ),
           ],
+            );
+          },
         ),
       ),
     );

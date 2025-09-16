@@ -3,8 +3,11 @@ import 'package:ecommerce/views/screens/about_screen.dart';
 import 'package:ecommerce/views/screens/contact_us_screen.dart';
 import 'package:ecommerce/views/screens/home_screen.dart';
 import 'package:ecommerce/views/screens/product_screen.dart';
+import 'package:ecommerce/views/screens/cart_screen.dart';
 import 'package:ecommerce/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ecommerce/providers/cart_provider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -19,17 +22,18 @@ class _HomeScreenState extends State<Home> {
   bool _showNavBar = true;
   Timer? _hideTimer;
 
-  final _pages = [
-    HomeScreen(),
-    AboutScreen(),
-    ProductScreen(),
-    ContactUsScreen(),
-  ];
+  late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
     _startHideTimer();
+    _pages = const [
+      HomeScreen(),
+      AboutScreen(),
+      ProductScreen(),
+      ContactUsScreen(),
+    ];
   }
 
   void _startHideTimer() {
@@ -83,6 +87,42 @@ Widget build(BuildContext context) {
           ),
           iconTheme: IconThemeData(color: colorScheme.primary),
           actions: [
+            // Cart icon with badge
+            Builder(
+              builder: (context) {
+                final cartCount = context.watch<CartProvider>().totalCount;
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.shopping_cart_outlined),
+                      tooltip: 'Cart',
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const CartScreen()),
+                        );
+                      },
+                    ),
+                    if (cartCount > 0)
+                      Positioned(
+                        right: 8,
+                        top: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            '$cartCount',
+                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () {
@@ -92,7 +132,7 @@ Widget build(BuildContext context) {
             ),
           ],
         ),
-        body: _pages[_selectedIndex],
+        body: _buildPageWithCartHook(_pages[_selectedIndex]),
         bottomNavigationBar: _showNavBar
             ? AnimatedSlide(
                 duration: const Duration(milliseconds: 350),
@@ -115,4 +155,18 @@ Widget build(BuildContext context) {
     ),
   );
 }
+
+  // Injects cart-aware props into ProductScreen when present
+  Widget _buildPageWithCartHook(Widget page) {
+    if (page is ProductScreen) {
+      final cartCount = context.watch<CartProvider>().totalCount;
+      return ProductScreen(
+        onCartTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const CartScreen()),
+        ),
+        cartCount: cartCount,
+      );
+    }
+    return page;
+  }
 }

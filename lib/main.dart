@@ -1,5 +1,7 @@
 import 'package:ecommerce/utils/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/cart_provider.dart';
 import 'routes/app_route.dart';
 
 void main() {
@@ -11,9 +13,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-
-    return MaterialApp(
+    return ChangeNotifierProvider<CartProvider>(
+      create: (_) => CartProvider(),
+      child: MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Zentara',
       theme: ThemeData(
@@ -61,6 +63,7 @@ class MyApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.system,
       routes: AppRoutes.routes,
+    ),
     );
   }
 }

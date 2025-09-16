@@ -4,6 +4,8 @@ import 'package:ecommerce/models/product.dart';
 import 'package:ecommerce/services/products_api.dart';
 import 'package:ecommerce/repositories/products_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ecommerce/providers/cart_provider.dart';
 
 class ProductScreen extends StatefulWidget {
   final VoidCallback? onCartTap;
@@ -393,6 +395,7 @@ class _ProductCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (_) => ProductDetailScreen(
+              id: product.id,
               name: product.name,
               price: product.priceLabel,
               imagePath: product.imageUrl,
@@ -478,6 +481,7 @@ class _ProductCard extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () {
+                    context.read<CartProvider>().addProduct(product);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Added to cart!')),
                     );

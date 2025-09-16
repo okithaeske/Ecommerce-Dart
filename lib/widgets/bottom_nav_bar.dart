@@ -75,8 +75,8 @@ class CustomBottomNavBar extends StatelessWidget {
                 ),
                 _luxNavBarItem(
                   context,
-                  icon: Icons.shopping_cart,
-                  label: "Cart",
+                  icon: Icons.shopping_bag_outlined,
+                  label: "Products",
                   selected: currentIndex == 2,
                   colorScheme: colorScheme,
                   isLandscape: isLandscape,
