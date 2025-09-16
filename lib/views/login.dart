@@ -1,4 +1,8 @@
 import 'package:ecommerce/routes/app_route.dart';
+import 'package:ecommerce/repositories/auth_repository.dart';
+import 'package:ecommerce/services/auth_api.dart';
+import 'package:ecommerce/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen>
   bool _obscurePassword = true;
   bool _emailFocused = false;
   bool _passwordFocused = false;
+  bool _isLoading = false;
 
   late AnimationController _fadeController;
 
@@ -133,6 +138,7 @@ class _LoginScreenState extends State<LoginScreen>
                               emailFocused: _emailFocused,
                               passwordFocused: _passwordFocused,
                               canLogin: canLogin,
+                              isLoading: _isLoading,
                               onEmailFocus:
                                   (v) => setState(() => _emailFocused = v),
                               onPasswordFocus:
@@ -165,6 +171,7 @@ class _LoginScreenState extends State<LoginScreen>
                         emailFocused: _emailFocused,
                         passwordFocused: _passwordFocused,
                         canLogin: canLogin,
+                        isLoading: _isLoading,
                         onEmailFocus: (v) => setState(() => _emailFocused = v),
                         onPasswordFocus:
                             (v) => setState(() => _passwordFocused = v),
@@ -182,8 +189,37 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  void _submit(BuildContext context) {
-    Navigator.pushReplacementNamed(context, AppRoutes.home);
+  Future<void> _submit(BuildContext context) async {
+    if (_isLoading) return;
+    if (!canLogin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Both email and password are required.')),
+      );
+      return;
+    }
+    setState(() => _isLoading = true);
+    try {
+      final email = widget.emailController.text.trim();
+      final password = widget.passwordController.text.trim();
+      // Point this to your Laravel API base URL (without trailing slash)
+      const String apiBase = 'https://zentara.duckdns.org/api';
+      final repo = AuthRepository(AuthApi(baseUrl: apiBase));
+      final res = await repo.login(email: email, password: password);
+      if (!mounted) return;
+      context.read<AuthProvider>().setAuth(
+            token: res.token,
+            tokenType: res.tokenType,
+            user: res.user,
+          );
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 }
 
@@ -196,6 +232,7 @@ class _LoginCard extends StatelessWidget {
   final bool emailFocused;
   final bool passwordFocused;
   final bool canLogin;
+  final bool isLoading;
   final ValueChanged<bool> onEmailFocus;
   final ValueChanged<bool> onPasswordFocus;
   final VoidCallback onTogglePassword;
@@ -209,6 +246,7 @@ class _LoginCard extends StatelessWidget {
     required this.emailFocused,
     required this.passwordFocused,
     required this.canLogin,
+    required this.isLoading,
     required this.onEmailFocus,
     required this.onPasswordFocus,
     required this.onTogglePassword,
@@ -354,7 +392,7 @@ class _LoginCard extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: canLogin
+                      onPressed: (canLogin && !isLoading)
                           ? onSubmit
                           : () {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -373,10 +411,16 @@ class _LoginCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(fontSize: 16),
-                      ),
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text(
+                              "Login",
+                              style: TextStyle(fontSize: 16),
+                            ),
                     ),
                   ),
                   const SizedBox(height: 12),
