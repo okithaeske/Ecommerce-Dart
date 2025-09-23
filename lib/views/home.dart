@@ -6,6 +6,7 @@ import 'package:ecommerce/views/screens/product_screen.dart';
 import 'package:ecommerce/views/screens/cart_screen.dart';
 import 'package:ecommerce/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:ecommerce/routes/app_route.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce/providers/cart_provider.dart';
 
@@ -124,9 +125,14 @@ Widget build(BuildContext context) {
               },
             ),
             IconButton(
+              icon: const Icon(Icons.sensors),
+              tooltip: 'Sensors',
+              onPressed: () => Navigator.pushNamed(context, AppRoutes.sensors),
+            ),
+            IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/');
+                Navigator.pushReplacementNamed(context, AppRoutes.login);
               },
               tooltip: 'Logout',
             ),

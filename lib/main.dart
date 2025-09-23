@@ -6,6 +6,7 @@ import 'providers/auth_provider.dart';
 import 'routes/app_route.dart';
 import 'services/connectivity_service.dart';
 import 'services/sync_queue_service.dart';
+import 'services/lexicon_service.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'views/home.dart';
 import 'views/login.dart';
@@ -17,6 +18,7 @@ Future<void> main() async {
   await Future.wait([
     Hive.openBox('cache'),
     Hive.openBox('sync_queue'),
+    LexiconService.instance.loadFromAssets(),
   ]);
 
   // Initialize background services (connectivity + sync queue)

@@ -41,6 +41,10 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.4
+  geolocator: ^10.1.0
+  mobile_scanner: ^3.5.7
+  speech_to_text: ^7.3.0
+  permission_handler: ^11.3.1
 
 dev_dependencies:
   flutter_test:
@@ -96,6 +100,7 @@ flutter:
     - assets/images/hero_watchContact.jpg
     - assets/images/preview_map.png
     - assets/images/heroabt.jpg
+    - assets/lexicon.json
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

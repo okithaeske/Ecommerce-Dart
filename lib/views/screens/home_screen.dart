@@ -1,6 +1,7 @@
 import 'package:ecommerce/utils/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce/services/connectivity_service.dart';
+import 'package:ecommerce/routes/app_route.dart';
 // import 'package:ecommerce/utils/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce/models/product.dart';
@@ -113,7 +114,18 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: items,
+        children: [
+          ...items,
+          ElevatedButton.icon(
+            onPressed: () => Navigator.pushNamed(context, AppRoutes.sensors),
+            icon: const Icon(Icons.sensors),
+            label: const Text('Sensors'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              foregroundColor: Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }

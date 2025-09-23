@@ -1,0 +1,27 @@
+{
+  "brands": [
+    "rolex", "omega", "iwc", "tissot", "cartier", "casio", "hublot",
+    "patek", "vacheron", "jaeger", "panerai", "gucci", "timex",
+    "seiko", "longines", "breitling", "tag", "tudor", "richard", "mille"
+  ],
+  "brand_aliases": {
+    "vc": "vacheron",
+    "vacheron constantin": "vacheron",
+    "tag heuer": "tag",
+    "rm": "richard",
+    "speedy": "speedmaster"
+  },
+  "types": [
+    "chronograph", "chrono", "dive", "diver", "dress", "pilot", "field", "gmt", "skeleton"
+  ],
+  "colors": [
+    "black", "white", "silver", "gold", "blue", "green", "red", "brown", "gray", "grey", "champagne", "pink", "rose"
+  ],
+  "materials": [
+    "steel", "stainless", "titanium", "gold", "rose", "pink", "ceramic", "bronze"
+  ],
+  "straps": [
+    "leather", "rubber", "bracelet", "steel bracelet", "strap", "silicone"
+  ]
+}
+

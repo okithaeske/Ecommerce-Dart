@@ -46,4 +46,3 @@ class ConnectivityService extends ChangeNotifier {
     super.dispose();
   }
 }
-
