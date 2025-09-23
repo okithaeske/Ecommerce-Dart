@@ -67,7 +67,7 @@ class CartScreen extends StatelessWidget {
                           style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
                         );
                         final totalText = Text(
-                          '\$' + item.totalPrice.toStringAsFixed(2),
+                          '\$${item.totalPrice.toStringAsFixed(2)}',
                           style: textTheme.titleMedium?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
                         );
 
@@ -178,7 +178,7 @@ class CartScreen extends StatelessWidget {
                           child: Text('Total', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                         ),
                         Text(
-                          '\$' + cart.totalAmount.toStringAsFixed(2),
+                          '\$${cart.totalAmount.toStringAsFixed(2)}',
                           style: textTheme.titleLarge?.copyWith(
                             color: colorScheme.primary,
                             fontWeight: FontWeight.bold,

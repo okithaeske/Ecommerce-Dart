@@ -198,23 +198,28 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
     setState(() => _isLoading = true);
+    // Capture dependencies that use BuildContext before the async gap.
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final auth = context.read<AuthProvider>();
     try {
       final email = widget.emailController.text.trim();
       final password = widget.passwordController.text.trim();
       // Point this to your Laravel API base URL (without trailing slash)
       const String apiBase = 'https://zentara.duckdns.org/api';
       final repo = AuthRepository(AuthApi(baseUrl: apiBase));
+
       final res = await repo.login(email: email, password: password);
       if (!mounted) return;
-      context.read<AuthProvider>().setAuth(
-            token: res.token,
-            tokenType: res.tokenType,
-            user: res.user,
-          );
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
+      auth.setAuth(
+        token: res.token,
+        tokenType: res.tokenType,
+        user: res.user,
+      );
+      navigator.pushReplacementNamed(AppRoutes.home);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
       );
     } finally {
