@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:ecommerce/views/screens/about_screen.dart';
 import 'package:ecommerce/views/screens/contact_us_screen.dart';
 import 'package:ecommerce/views/screens/home_screen.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:ecommerce/routes/app_route.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce/providers/cart_provider.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -24,6 +26,8 @@ class _HomeScreenState extends State<Home> {
   Timer? _hideTimer;
 
   late final List<Widget> _pages;
+  StreamSubscription<AccelerometerEvent>? _accelSub;
+  DateTime? _lastShake;
 
   @override
   void initState() {
@@ -35,6 +39,7 @@ class _HomeScreenState extends State<Home> {
       ProductScreen(),
       ContactUsScreen(),
     ];
+    _initShakeToScan();
   }
 
   void _startHideTimer() {
@@ -54,7 +59,26 @@ class _HomeScreenState extends State<Home> {
   @override
   void dispose() {
     _hideTimer?.cancel();
+    _accelSub?.cancel();
     super.dispose();
+  }
+
+  void _initShakeToScan() {
+    _accelSub = accelerometerEventStream().listen((e) {
+      final gX = e.x / 9.80665;
+      final gY = e.y / 9.80665;
+      final gZ = e.z / 9.80665;
+      final gForce = math.sqrt(gX * gX + gY * gY + gZ * gZ);
+      if (gForce > 2.4) {
+        final now = DateTime.now();
+        if (_lastShake == null || now.difference(_lastShake!) > const Duration(seconds: 3)) {
+          _lastShake = now;
+          if (mounted) {
+            Navigator.pushNamed(context, AppRoutes.scanner);
+          }
+        }
+      }
+    });
   }
 
  @override
@@ -125,9 +149,9 @@ Widget build(BuildContext context) {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.sensors),
-              tooltip: 'Sensors',
-              onPressed: () => Navigator.pushNamed(context, AppRoutes.sensors),
+              icon: const Icon(Icons.settings),
+              tooltip: 'Settings',
+              onPressed: () => Navigator.pushNamed(context, AppRoutes.settings),
             ),
             IconButton(
               icon: const Icon(Icons.logout),
@@ -139,6 +163,14 @@ Widget build(BuildContext context) {
           ],
         ),
         body: _buildPageWithCartHook(_pages[_selectedIndex]),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.pushNamed(context, AppRoutes.sensors),
+          tooltip: 'Sensors',
+          backgroundColor: colorScheme.primary,
+          foregroundColor: Colors.black,
+          child: const Icon(Icons.sensors),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         bottomNavigationBar: _showNavBar
             ? AnimatedSlide(
                 duration: const Duration(milliseconds: 350),

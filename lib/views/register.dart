@@ -1,4 +1,5 @@
 import 'package:ecommerce/routes/app_route.dart';
+import 'package:ecommerce/services/auth_api.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -19,6 +20,8 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   bool _passwordFocused = false;
   bool _nameFocused = false;
   bool _confirmFocused = false;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   late AnimationController _fadeController;
 
@@ -56,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     super.dispose();
   }
 
-  void _submit(BuildContext context) {
+  Future<void> _submit(BuildContext context) async {
     if (!canRegister) {
       String error = "All fields required and passwords must match.";
       if (widget.passwordController.text != widget.confirmPasswordController.text) {
@@ -67,8 +70,33 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
       );
       return;
     }
-    // Success: Route to login (simulate registration)
-    Navigator.pushReplacementNamed(context, AppRoutes.login);
+    if (_isLoading) return;
+    setState(() => _isLoading = true);
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    try {
+      const String apiBase = 'https://zentara.duckdns.org/api';
+      final api = AuthApi(baseUrl: apiBase);
+      final name = widget.nameController.text.trim();
+      final email = widget.emailController.text.trim();
+      final password = widget.passwordController.text;
+      await api.register(
+        name: name,
+        email: email,
+        password: password,
+        passwordConfirmation: widget.confirmPasswordController.text,
+      );
+      if (!mounted) return;
+      messenger.showSnackBar(const SnackBar(content: Text('Registration successful. Please sign in.')));
+      navigator.pushReplacementNamed(AppRoutes.login);
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -78,6 +106,8 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     final size = MediaQuery.of(context).size;
     final isWide = size.width > 700;
     final horizontalPadding = isWide ? 0.0 : 24.0;
+    // Local alias avoids analyzer oddities across closures
+    final bool isLoadingLocal = _isLoading;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -156,6 +186,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                               passwordFocused: _passwordFocused,
                               confirmFocused: _confirmFocused,
                               canRegister: canRegister,
+                              isLoading: _isLoading,
                               onNameFocus: (v) => setState(() => _nameFocused = v),
                               onEmailFocus: (v) => setState(() => _emailFocused = v),
                               onPasswordFocus: (v) => setState(() => _passwordFocused = v),
@@ -191,6 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                         passwordFocused: _passwordFocused,
                         confirmFocused: _confirmFocused,
                         canRegister: canRegister,
+                        isLoading: _isLoading,
                         onNameFocus: (v) => setState(() => _nameFocused = v),
                         onEmailFocus: (v) => setState(() => _emailFocused = v),
                         onPasswordFocus: (v) => setState(() => _passwordFocused = v),
@@ -225,6 +257,7 @@ class _RegisterCard extends StatelessWidget {
   final bool passwordFocused;
   final bool confirmFocused;
   final bool canRegister;
+  final bool isLoading;
   final ValueChanged<bool> onNameFocus;
   final ValueChanged<bool> onEmailFocus;
   final ValueChanged<bool> onPasswordFocus;
@@ -247,6 +280,7 @@ class _RegisterCard extends StatelessWidget {
     required this.passwordFocused,
     required this.confirmFocused,
     required this.canRegister,
+    required this.isLoading,
     required this.onNameFocus,
     required this.onEmailFocus,
     required this.onPasswordFocus,
@@ -422,7 +456,7 @@ class _RegisterCard extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: canRegister ? onSubmit : null,
+                      onPressed: canRegister && !isLoading ? onSubmit : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.primary,
                         foregroundColor: colorScheme.onPrimary,
@@ -431,10 +465,12 @@ class _RegisterCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        "Create Account",
-                        style: TextStyle(fontSize: 16),
-                      ),
+                      child: isLoading
+                            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                            : const Text(
+                                "Create Account",
+                                style: TextStyle(fontSize: 16),
+                              ),
                     ),
                   ),
                   const SizedBox(height: 16),

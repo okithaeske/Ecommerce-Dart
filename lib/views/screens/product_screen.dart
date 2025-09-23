@@ -4,6 +4,8 @@ import 'package:ecommerce/models/product.dart';
 import 'package:ecommerce/services/products_api.dart';
 import 'package:ecommerce/repositories/products_repository.dart';
 import 'package:ecommerce/services/connectivity_service.dart';
+import 'package:ecommerce/services/battery_service.dart';
+import 'package:ecommerce/utils/system_settings.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce/providers/cart_provider.dart';
@@ -87,8 +89,33 @@ class _ProductScreenState extends State<ProductScreen> {
             return const Center(child: Text('Failed to load products'));
           }
           final items = snapshot.data ?? const <Product>[];
+          final isLowBattery = context.watch<BatteryService>().isLowBattery;
           return CustomScrollView(
           slivers: [
+          if (isLowBattery)
+            SliverToBoxAdapter(
+              child: Container(
+                width: double.infinity,
+                color: colorScheme.surfaceContainerHighest,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: [
+                    Icon(Icons.battery_alert_rounded, color: colorScheme.tertiary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Battery saver on: limiting effects to save power',
+                        style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurface),
+                      ),
+                    )
+                    ,TextButton(
+                      onPressed: () => openDisplaySettings(context),
+                      child: const Text('Dark Mode Settings'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           SliverToBoxAdapter(
             child: _herobanner(context, colorScheme, textTheme, heroHeight),
           ),

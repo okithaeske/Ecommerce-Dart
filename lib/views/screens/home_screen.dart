@@ -1,6 +1,8 @@
 import 'package:ecommerce/utils/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce/services/connectivity_service.dart';
+import 'package:ecommerce/services/battery_service.dart';
+import 'package:ecommerce/utils/system_settings.dart';
 import 'package:ecommerce/routes/app_route.dart';
 // import 'package:ecommerce/utils/widgets.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final textTheme = Theme.of(context).textTheme;
     final width = MediaQuery.of(context).size.width;
     final isOnline = context.watch<ConnectivityService>().isOnline;
+    final isLowBattery = context.watch<BatteryService>().isLowBattery;
     
 
     return Scaffold(
@@ -57,6 +60,28 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurface),
                         ),
                       )
+                    ],
+                  ),
+                ),
+              if (isLowBattery)
+                Container(
+                  width: double.infinity,
+                  color: colorScheme.surfaceContainerHighest,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
+                    children: [
+                      Icon(Icons.battery_alert_rounded, color: colorScheme.tertiary),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Battery saver: animations reduced and heavy tasks deferred',
+                          style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurface),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => openDisplaySettings(context),
+                        child: const Text('Dark Mode Settings'),
+                      ),
                     ],
                   ),
                 ),

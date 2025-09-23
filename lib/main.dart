@@ -7,6 +7,9 @@ import 'routes/app_route.dart';
 import 'services/connectivity_service.dart';
 import 'services/sync_queue_service.dart';
 import 'services/lexicon_service.dart';
+import 'services/battery_service.dart';
+import 'services/settings_service.dart';
+import 'widgets/sensors_hud.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'views/home.dart';
 import 'views/login.dart';
@@ -37,10 +40,21 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ConnectivityService()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => BatteryService()),
+        ChangeNotifierProvider(create: (_) => SettingsService()),
       ],
-      child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Zentara',
+      child: Builder(
+        builder: (context) {
+          final battery = context.watch<BatteryService>();
+          final settings = context.watch<SettingsService>();
+          final useBatteryTheme = settings.batteryThemeEnabled;
+          final threshold = settings.batteryThemeThreshold;
+          final themeMode = (useBatteryTheme && battery.level != null && battery.level! < threshold)
+              ? ThemeMode.dark
+              : ThemeMode.system;
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Zentara',
       theme: ThemeData(
         useMaterial3: true, // Makes all widgets feel more modern!
         brightness: Brightness.light,
@@ -84,11 +98,21 @@ class MyApp extends StatelessWidget {
         cardColor: const Color(0xFF232323),
         // Adjust dark backgrounds for luxury feel
       ),
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routes: AppRoutes.routes,
       // Route based on auth state without flashing login on cold start
       home: const _RootGate(),
-    ),
+      builder: (context, child) {
+        final showHud = context.watch<SettingsService>().sensorsHudEnabled;
+        if (child == null) return const SizedBox.shrink();
+        return Stack(children: [
+          child,
+          if (showHud) const SensorsHud(),
+        ]);
+      },
+    );
+        },
+      ),
     );
   }
 }

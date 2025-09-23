@@ -95,7 +95,7 @@ String normalizeQuery(String input) {
     } else if (t == 'thousand') {
       // lone 'thousand' after a number
       if (out.isNotEmpty && RegExp(r"^\d+").hasMatch(out.last)) {
-        out[out.length - 1] = out.last + 'k';
+        out[out.length - 1] = '${out.last}k';
       } else {
         out.add('1000');
       }

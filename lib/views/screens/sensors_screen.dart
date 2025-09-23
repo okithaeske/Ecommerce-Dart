@@ -1,10 +1,12 @@
 import 'dart:math' as math;
+import 'dart:async';
 
 import 'package:ecommerce/services/permissions_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:shared_preferences/shared_preferences.dart';
+// Battery/motion sensors not displayed in this demo page
 
 import 'scanner_screen.dart';
 import 'search_results_screen.dart';
@@ -23,6 +25,8 @@ class _SensorsScreenState extends State<SensorsScreen> {
   late final stt.SpeechToText _speech;
   String? _localeId;
 
+  // Battery/motion removed from Sensors demo screen UI
+
   // Example store location (Kandy, Sri Lanka approx.)
   static const double _storeLat = 7.2906;
   static const double _storeLng = 80.6337;
@@ -40,6 +44,8 @@ class _SensorsScreenState extends State<SensorsScreen> {
       _localeId = prefs.getString('asr_locale');
     });
   }
+
+  // (Battery/motion setup removed)
 
   Future<void> _getLocation() async {
     final ok = await PermissionsService.ensureLocation();
@@ -200,6 +206,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
               color: cs.primary,
               onTap: _voice,
             ),
+            // Battery and motion tiles intentionally not shown here
             const Spacer(),
             Text(
               'Note: Permissions requested per feature. Data is not stored.',
@@ -211,6 +218,8 @@ class _SensorsScreenState extends State<SensorsScreen> {
       ),
     );
   }
+
+  // (Helpers and subscriptions removed; default dispose is sufficient)
 }
 
 class _Tile extends StatelessWidget {

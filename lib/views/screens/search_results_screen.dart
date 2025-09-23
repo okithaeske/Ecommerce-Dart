@@ -6,6 +6,7 @@ import 'product_detail.dart';
 import 'package:ecommerce/utils/fuzzy.dart';
 import 'package:ecommerce/utils/nlu.dart';
 import 'package:ecommerce/services/semantic_search_service.dart';
+import 'package:ecommerce/services/lexicon_service.dart';
 
 class SearchResultsScreen extends StatefulWidget {
   final String query;
@@ -62,13 +63,17 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       final descLower = p.description.toLowerCase();
       // Brand weight
       for (final b in _parsed.brands) {
-        if (nameLower.contains(b)) s += 0.12;
-        else if (descLower.contains(b)) s += 0.06;
+        if (nameLower.contains(b)) {
+          s += 0.12;
+        // ignore: curly_braces_in_flow_control_structures
+        } else if (descLower.contains(b)) s += 0.06;
       }
       // Type weight
       for (final t in _parsed.types) {
-        if (nameLower.contains(t)) s += 0.10;
-        else if (descLower.contains(t)) s += 0.05;
+        if (nameLower.contains(t)) {
+          s += 0.10;
+        // ignore: curly_braces_in_flow_control_structures
+        } else if (descLower.contains(t)) s += 0.05;
       }
       // Color/material/strap light weights
       for (final c in _parsed.colors) {
@@ -194,7 +199,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
             itemBuilder: (context, index) {
               if (index == 0 && items.length < 3) {
                 // Clarification chips section when results are sparse
-                final suggestions = _suggestBrands(widget.query, all, max: 5);
+                final suggestions = _suggestBrands(widget.query, items, max: 5);
                 if (suggestions.isEmpty) return const SizedBox.shrink();
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
