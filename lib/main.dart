@@ -4,8 +4,24 @@ import 'package:provider/provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/auth_provider.dart';
 import 'routes/app_route.dart';
+import 'services/connectivity_service.dart';
+import 'services/sync_queue_service.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'views/home.dart';
+import 'views/login.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Initialize Hive for lightweight local storage and caching
+  await Hive.initFlutter();
+  await Future.wait([
+    Hive.openBox('cache'),
+    Hive.openBox('sync_queue'),
+  ]);
+
+  // Initialize background services (connectivity + sync queue)
+  SyncQueueService.instance; // ensure singleton constructed
+
   runApp(const MyApp());
 }
 
@@ -16,6 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ConnectivityService()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
@@ -67,7 +84,25 @@ class MyApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.system,
       routes: AppRoutes.routes,
+      // Route based on auth state without flashing login on cold start
+      home: const _RootGate(),
     ),
     );
+  }
+}
+
+class _RootGate extends StatelessWidget {
+  const _RootGate();
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    if (auth.isRestoring) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    // Navigate based on auth state
+    return auth.isAuthenticated ? Home() : LoginScreen();
   }
 }

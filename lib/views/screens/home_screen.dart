@@ -1,4 +1,6 @@
 import 'package:ecommerce/utils/theme.dart';
+import 'package:provider/provider.dart';
+import 'package:ecommerce/services/connectivity_service.dart';
 // import 'package:ecommerce/utils/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce/models/product.dart';
@@ -29,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final width = MediaQuery.of(context).size.width;
+    final isOnline = context.watch<ConnectivityService>().isOnline;
     
 
     return Scaffold(
@@ -38,6 +41,24 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (!isOnline)
+                Container(
+                  width: double.infinity,
+                  color: colorScheme.surfaceContainerHighest,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  child: Row(
+                    children: [
+                      Icon(Icons.wifi_off, color: colorScheme.error),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Offline mode: Showing last saved products',
+                          style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurface),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               _AnimatedHeroBanner(
                 colorScheme: colorScheme,
                 textTheme: textTheme,

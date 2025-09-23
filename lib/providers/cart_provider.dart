@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:ecommerce/models/cart_item.dart';
 import 'package:ecommerce/models/product.dart';
+import 'package:ecommerce/services/sync_queue_service.dart';
 
 class CartProvider extends ChangeNotifier {
   final Map<String, CartItem> _items = {};
@@ -12,6 +13,10 @@ class CartProvider extends ChangeNotifier {
   double get totalAmount => _items.values.fold(0.0, (sum, item) => sum + item.totalPrice);
 
   void addProduct(Product product, {int quantity = 1}) {
+    if (!SyncQueueService.instance.isOnline) {
+      // Offline: do not mutate cart; action disabled in UI.
+      return;
+    }
     final id = product.id;
     if (id.isEmpty) return;
     if (_items.containsKey(id)) {
@@ -47,10 +52,16 @@ class CartProvider extends ChangeNotifier {
         quantity: quantity,
       );
     }
+    if (!SyncQueueService.instance.isOnline) {
+      return;
+    }
     notifyListeners();
   }
 
   void decrement(String id) {
+    if (!SyncQueueService.instance.isOnline) {
+      return;
+    }
     if (!_items.containsKey(id)) return;
     final item = _items[id]!;
     if (item.quantity > 1) {
@@ -62,13 +73,18 @@ class CartProvider extends ChangeNotifier {
   }
 
   void remove(String id) {
+    if (!SyncQueueService.instance.isOnline) {
+      return;
+    }
     _items.remove(id);
     notifyListeners();
   }
 
   void clear() {
+    if (!SyncQueueService.instance.isOnline) {
+      return;
+    }
     _items.clear();
     notifyListeners();
   }
 }
-

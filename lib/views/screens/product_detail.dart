@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce/providers/cart_provider.dart';
 import 'package:ecommerce/models/product.dart';
+import 'package:ecommerce/services/connectivity_service.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final String id, name, price, imagePath, description;
@@ -19,6 +20,7 @@ class ProductDetailScreen extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final accent = colorScheme.primary;
+    final isOnline = context.watch<ConnectivityService>().isOnline;
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     final padding = isLandscape
@@ -125,6 +127,12 @@ class ProductDetailScreen extends StatelessWidget {
               ),
             ),
             onPressed: () {
+              if (!isOnline) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Offline: cannot add to cart')),
+                );
+                return;
+              }
               final p = Product(
                 id: id,
                 name: name,

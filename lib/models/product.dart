@@ -42,5 +42,12 @@ class Product {
     final s = value.toStringAsFixed(2);
     return '\$$s';
   }
-}
 
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'price_label': priceLabel,
+        'image_url': imageUrl,
+        'description': description,
+      };
+}

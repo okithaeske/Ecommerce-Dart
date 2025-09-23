@@ -3,8 +3,9 @@ import 'package:ecommerce/views/screens/product_detail.dart';
 import 'package:ecommerce/models/product.dart';
 import 'package:ecommerce/services/products_api.dart';
 import 'package:ecommerce/repositories/products_repository.dart';
-import 'package:flutter/material.dart';
+import 'package:ecommerce/services/connectivity_service.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
 import 'package:ecommerce/providers/cart_provider.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -60,9 +61,9 @@ class _ProductScreenState extends State<ProductScreen> {
 
     // Hero height cap
     final heroHeight =
-        isLandscape
-            ? (size.height * 0.32).clamp(210, 350).toDouble()
-            : (size.height * 0.44);
+         isLandscape
+             ? (size.height * 0.32).clamp(210, 350).toDouble()
+             : (size.height * 0.44);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -481,6 +482,13 @@ class _ProductCard extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () {
+                    final online = context.read<ConnectivityService>().isOnline;
+                    if (!online) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Offline: cannot add to cart')),
+                      );
+                      return;
+                    }
                     context.read<CartProvider>().addProduct(product);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Added to cart!')),

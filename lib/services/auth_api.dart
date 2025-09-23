@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class AuthApi {
   final String baseUrl; // e.g. https://your-host/api
@@ -13,6 +14,15 @@ class AuthApi {
     required String password,
     String? deviceName,
   }) async {
+    final results = await Connectivity().checkConnectivity();
+    final online = results.any((r) =>
+        r == ConnectivityResult.mobile ||
+        r == ConnectivityResult.wifi ||
+        r == ConnectivityResult.ethernet ||
+        r == ConnectivityResult.vpn);
+    if (!online) {
+      throw Exception('No internet connection');
+    }
     final uri = Uri.parse('$baseUrl/login');
     final payload = {
       'email': email,
@@ -40,4 +50,3 @@ class AuthApi {
     throw Exception(message);
   }
 }
-
