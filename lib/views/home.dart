@@ -153,13 +153,6 @@ Widget build(BuildContext context) {
               tooltip: 'Settings',
               onPressed: () => Navigator.pushNamed(context, AppRoutes.settings),
             ),
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () {
-                Navigator.pushReplacementNamed(context, AppRoutes.login);
-              },
-              tooltip: 'Logout',
-            ),
           ],
         ),
         body: _buildPageWithCartHook(_pages[_selectedIndex]),

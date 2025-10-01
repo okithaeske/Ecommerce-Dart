@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({super.key});
@@ -22,7 +25,8 @@ class _ResponsiveBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     final width = MediaQuery.of(context).size.width;
 
     if (isLandscape && width > 800) {
@@ -88,21 +92,28 @@ class ContactHeroBanner extends StatefulWidget {
   @override
   State<ContactHeroBanner> createState() => _ContactHeroBannerState();
 }
-class _ContactHeroBannerState extends State<ContactHeroBanner> with SingleTickerProviderStateMixin {
+
+class _ContactHeroBannerState extends State<ContactHeroBanner>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnim;
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 850));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 850),
+    );
     _fadeAnim = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
   }
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -150,8 +161,130 @@ class ContactFormCard extends StatefulWidget {
   @override
   State<ContactFormCard> createState() => _ContactFormCardState();
 }
+
 class _ContactFormCardState extends State<ContactFormCard> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _messageController = TextEditingController();
+
   bool _agreed = false;
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    FocusScope.of(context).unfocus();
+    setState(() => _isSubmitting = true);
+
+    const endpoint = 'https://zentara.duckdns.org/api/contact';
+    final uri = Uri.parse(endpoint);
+    final payload = jsonEncode({
+      'name': _nameController.text.trim(),
+      'email': _emailController.text.trim(),
+      'message': _messageController.text.trim(),
+    });
+
+    var errorMessage = '';
+    var shouldShowError = false;
+    try {
+      final response = await http.post(
+        uri,
+        headers: const {'Content-Type': 'application/json'},
+        body: payload,
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        if (!mounted) return;
+        _formKey.currentState!.reset();
+        _nameController.clear();
+        _emailController.clear();
+        _messageController.clear();
+        setState(() => _agreed = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Message sent successfully!')),
+        );
+        return;
+      } else {
+        errorMessage =
+            _readResponseMessage(response.body) ??
+            'Failed to send message. Please try again.';
+        shouldShowError = true;
+      }
+    } catch (_) {
+      errorMessage = 'Could not reach the server. Please try again later.';
+      shouldShowError = true;
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
+
+    if (!mounted || !shouldShowError) {
+      return;
+    }
+    final message =
+        errorMessage.isEmpty
+            ? 'Something went wrong. Please try again.'
+            : errorMessage;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  String? _readResponseMessage(String body) {
+    if (body.isEmpty) return null;
+    try {
+      final decoded = jsonDecode(body);
+      if (decoded is Map<String, dynamic>) {
+        final message = decoded['message'] ?? decoded['error'];
+        if (message is String && message.trim().isNotEmpty) {
+          return message;
+        }
+      }
+    } catch (_) {
+      return null;
+    }
+    return null;
+  }
+
+  String? _validateName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your name';
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your email';
+    }
+    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+    if (!emailRegex.hasMatch(value.trim())) {
+      return 'Enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _validateMessage(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your message';
+    }
+    if (value.trim().length < 10) {
+      return 'Message should be at least 10 characters';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -164,91 +297,127 @@ class _ContactFormCardState extends State<ContactFormCard> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         child: Padding(
           padding: const EdgeInsets.all(18.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "We're Always Here To Assist",
-                style: textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
+          child: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "We're Always Here To Assist",
+                  style: textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                "Leave us a message and our team will get back to you soon.",
+                const SizedBox(height: 8),
+                Text(
+                  "Leave us a message and our team will get back to you soon.",
                   style: textTheme.bodyMedium?.copyWith(
                     color: colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: "Your Name",
-                  labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8)),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: "Your Email",
-                  labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8)),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                maxLines: 4,
-                decoration: InputDecoration(
-                  labelText: "Message",
-                  labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.8)),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Checkbox(
-                    value: _agreed,
-                    onChanged: (v) => setState(() => _agreed = v ?? false),
-                    activeColor: colorScheme.primary,
-                    side: BorderSide(color: colorScheme.primary),
-                  ),
-                  Expanded(
-                    child: Text(
-                      "I agree with terms & conditions",
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface,
-                      ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    labelText: "Your Name",
+                    labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.8),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _agreed
-                      ? () {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Message sent!'), duration: Duration(seconds: 2)),
-                          );
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.primary,
-                    foregroundColor: Colors.black,
-                    disabledBackgroundColor: colorScheme.primary.withValues(alpha: 0.45),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  child: const Text("Send Message"),
+                  textInputAction: TextInputAction.next,
+                  validator: _validateName,
                 ),
-              ),
-            ],
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: "Your Email",
+                    labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.8),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  validator: _validateEmail,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _messageController,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    labelText: "Message",
+                    labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.8),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  validator: _validateMessage,
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _agreed,
+                      onChanged: (v) {
+                        if (_isSubmitting) return;
+                        setState(() => _agreed = v ?? false);
+                      },
+                      activeColor: colorScheme.primary,
+                      side: BorderSide(color: colorScheme.primary),
+                    ),
+                    Expanded(
+                      child: Text(
+                        "I agree with terms & conditions",
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _agreed && !_isSubmitting ? _submit : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: Colors.black,
+                      disabledBackgroundColor: colorScheme.primary.withValues(
+                        alpha: 0.45,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      textStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    child:
+                        _isSubmitting
+                            ? const SizedBox(
+                              height: 22,
+                              width: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.4,
+                              ),
+                            )
+                            : const Text("Send Message"),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -287,17 +456,26 @@ class ContactDetailsSection extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
       child: Column(
         children: [
-          _iconRow(context, Icons.location_on_outlined, "123 Zenatara Avenue, Kandy, Sri Lanka"),
+          _iconRow(
+            context,
+            Icons.location_on_outlined,
+            "123 Zenatara Avenue, Kandy, Sri Lanka",
+          ),
           const SizedBox(height: 10),
           _iconRow(context, Icons.phone, "+94 77 123 4567"),
           const SizedBox(height: 10),
           _iconRow(context, Icons.mail_outline, "support@zenatara.com"),
           const SizedBox(height: 10),
-          _iconRow(context, Icons.access_time, "Mon–Fri: 9:00–18:00 | Sat: 10:00–14:00"),
+          _iconRow(
+            context,
+            Icons.access_time,
+            "Mon–Fri: 9:00–18:00 | Sat: 10:00–14:00",
+          ),
         ],
       ),
     );
   }
+
   Widget _iconRow(BuildContext context, IconData icon, String text) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -330,13 +508,18 @@ class ShopLocationsSection extends StatelessWidget {
         children: [
           Text(
             "Shop Locations",
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.primary),
+            style: textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.primary,
+            ),
           ),
           const SizedBox(height: 8),
           Card(
             color: colorScheme.surfaceContainerHighest,
             elevation: 0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: Row(
@@ -365,7 +548,8 @@ class MapPreviewSection extends StatelessWidget {
   const MapPreviewSection({super.key});
   @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     return Semantics(
       label: "Preview of our shop locations on a map",
       child: Padding(
@@ -412,8 +596,13 @@ class NewsletterSection extends StatelessWidget {
                     hintStyle: textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 12,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
               ),
@@ -422,14 +611,22 @@ class NewsletterSection extends StatelessWidget {
                 onPressed: () {
                   FocusManager.instance.primaryFocus?.unfocus();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Subscribed!'), duration: Duration(seconds: 2)),
+                    const SnackBar(
+                      content: Text('Subscribed!'),
+                      duration: Duration(seconds: 2),
+                    ),
                   );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colorScheme.primary,
                   foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 13,
+                    horizontal: 18,
+                  ),
                 ),
                 child: const Text("Subscribe"),
               ),

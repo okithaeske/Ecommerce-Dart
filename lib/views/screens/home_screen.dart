@@ -140,16 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          ...items,
-          ElevatedButton.icon(
-            onPressed: () => Navigator.pushNamed(context, AppRoutes.sensors),
-            icon: const Icon(Icons.sensors),
-            label: const Text('Sensors'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: colorScheme.primary,
-              foregroundColor: Colors.black,
-            ),
-          ),
+          ...items
         ],
       ),
     );

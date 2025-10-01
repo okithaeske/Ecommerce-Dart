@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ecommerce/routes/app_route.dart';
 import 'package:ecommerce/services/settings_service.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -80,6 +81,21 @@ class SettingsScreen extends StatelessWidget {
                   const Text('Shows draggable accelerometer/gyroscope and battery info on top of screens.'),
                 ],
               ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Card(
+            color: cs.surfaceContainerHighest,
+            child: ListTile(
+              leading: Icon(Icons.logout, color: cs.error),
+              title: Text(
+                'Log out',
+                style: tt.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              trailing: Icon(Icons.arrow_forward_ios, size: 16, color: cs.onSurfaceVariant),
+              onTap: () {
+                Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+              },
             ),
           ),
         ],
