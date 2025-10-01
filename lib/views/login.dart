@@ -2,6 +2,7 @@ import 'package:ecommerce/routes/app_route.dart';
 import 'package:ecommerce/repositories/auth_repository.dart';
 import 'package:ecommerce/services/auth_api.dart';
 import 'package:ecommerce/providers/auth_provider.dart';
+import 'package:ecommerce/utils/api_config.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
@@ -84,106 +85,106 @@ class _LoginScreenState extends State<LoginScreen>
           // Responsive Layout
           isWide
               ? Row(
-                  children: [
-                    // Left: Brand / Hero Image panel
-                    Expanded(
-                      flex: 2,
+                children: [
+                  // Left: Brand / Hero Image panel
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest,
+                        image: const DecorationImage(
+                          image: AssetImage(
+                            'assets/images/hero_watchproduct.jpg',
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                       child: Container(
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerHighest,
-                          image: const DecorationImage(
-                            image: AssetImage(
-                              'assets/images/hero_watchproduct.jpg',
+                        color: Colors.black.withValues(alpha: 0.38),
+                        child: Center(
+                          child: Text(
+                            'ZENATARA\nLUXURY WATCHES',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.93),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 34,
+                              letterSpacing: 2.5,
+                              height: 1.15,
+                              shadows: [
+                                Shadow(color: Colors.black45, blurRadius: 6),
+                              ],
                             ),
-                            fit: BoxFit.cover,
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        child: Container(
-                          color: Colors.black.withValues(alpha: 0.38),
-                          child: Center(
-                            child: Text(
-                              'ZENATARA\nLUXURY WATCHES',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.93),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 34,
-                                letterSpacing: 2.5,
-                                height: 1.15,
-                                shadows: [
-                                  Shadow(color: Colors.black45, blurRadius: 6),
-                                ],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Right: Login Card - make sure it's scrollable!
-                    Expanded(
-                      flex: 3,
-                      child: Center(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 42.0,
-                            vertical: 34,
-                          ),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 420),
-                            child: _LoginCard(
-                              fadeController: _fadeController,
-                              emailController: widget.emailController,
-                              passwordController: widget.passwordController,
-                              obscurePassword: _obscurePassword,
-                              emailFocused: _emailFocused,
-                              passwordFocused: _passwordFocused,
-                              canLogin: canLogin,
-                              isLoading: _isLoading,
-                              onEmailFocus:
-                                  (v) => setState(() => _emailFocused = v),
-                              onPasswordFocus:
-                                  (v) => setState(() => _passwordFocused = v),
-                              onTogglePassword:
-                                  () => setState(
-                                        () => _obscurePassword = !_obscurePassword,
-                                      ),
-                              onSubmit: () => _submit(context),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : Center(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: horizontalPadding,
-                      vertical: 24,
-                    ),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 420),
-                      child: _LoginCard(
-                        fadeController: _fadeController,
-                        emailController: widget.emailController,
-                        passwordController: widget.passwordController,
-                        obscurePassword: _obscurePassword,
-                        emailFocused: _emailFocused,
-                        passwordFocused: _passwordFocused,
-                        canLogin: canLogin,
-                        isLoading: _isLoading,
-                        onEmailFocus: (v) => setState(() => _emailFocused = v),
-                        onPasswordFocus:
-                            (v) => setState(() => _passwordFocused = v),
-                        onTogglePassword:
-                            () => setState(
-                                  () => _obscurePassword = !_obscurePassword,
-                                ),
-                        onSubmit: () => _submit(context),
                       ),
                     ),
                   ),
+                  // Right: Login Card - make sure it's scrollable!
+                  Expanded(
+                    flex: 3,
+                    child: Center(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 42.0,
+                          vertical: 34,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 420),
+                          child: _LoginCard(
+                            fadeController: _fadeController,
+                            emailController: widget.emailController,
+                            passwordController: widget.passwordController,
+                            obscurePassword: _obscurePassword,
+                            emailFocused: _emailFocused,
+                            passwordFocused: _passwordFocused,
+                            canLogin: canLogin,
+                            isLoading: _isLoading,
+                            onEmailFocus:
+                                (v) => setState(() => _emailFocused = v),
+                            onPasswordFocus:
+                                (v) => setState(() => _passwordFocused = v),
+                            onTogglePassword:
+                                () => setState(
+                                  () => _obscurePassword = !_obscurePassword,
+                                ),
+                            onSubmit: () => _submit(context),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+              : Center(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding,
+                    vertical: 24,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 420),
+                    child: _LoginCard(
+                      fadeController: _fadeController,
+                      emailController: widget.emailController,
+                      passwordController: widget.passwordController,
+                      obscurePassword: _obscurePassword,
+                      emailFocused: _emailFocused,
+                      passwordFocused: _passwordFocused,
+                      canLogin: canLogin,
+                      isLoading: _isLoading,
+                      onEmailFocus: (v) => setState(() => _emailFocused = v),
+                      onPasswordFocus:
+                          (v) => setState(() => _passwordFocused = v),
+                      onTogglePassword:
+                          () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
+                      onSubmit: () => _submit(context),
+                    ),
+                  ),
                 ),
+              ),
         ],
       ),
     );
@@ -206,16 +207,11 @@ class _LoginScreenState extends State<LoginScreen>
       final email = widget.emailController.text.trim();
       final password = widget.passwordController.text.trim();
       // Point this to your Laravel API base URL (without trailing slash)
-      const String apiBase = 'https://zentara.duckdns.org/api';
-      final repo = AuthRepository(AuthApi(baseUrl: apiBase));
+      final repo = AuthRepository(AuthApi(baseUrl: ApiConfig.baseUrl));
 
       final res = await repo.login(email: email, password: password);
       if (!mounted) return;
-      auth.setAuth(
-        token: res.token,
-        tokenType: res.tokenType,
-        user: res.user,
-      );
+      auth.setAuth(token: res.token, tokenType: res.tokenType, user: res.user);
       navigator.pushReplacementNamed(AppRoutes.home);
     } catch (e) {
       if (!mounted) return;
@@ -272,8 +268,8 @@ class _LoginCard extends StatelessWidget {
               Icons.lock_outline,
               size: 80,
               color:
-                   emailFocused || passwordFocused
-                       ? colorScheme.primary
+                  emailFocused || passwordFocused
+                      ? colorScheme.primary
                       : colorScheme.primary.withValues(alpha: 0.8),
               shadows: [
                 if (emailFocused || passwordFocused)
@@ -384,7 +380,9 @@ class _LoginCard extends StatelessWidget {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Both email and password are required.'),
+                              content: Text(
+                                'Both email and password are required.',
+                              ),
                               backgroundColor: Colors.redAccent,
                               duration: Duration(seconds: 2),
                             ),
@@ -397,17 +395,20 @@ class _LoginCard extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: (canLogin && !isLoading)
-                          ? onSubmit
-                          : () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Both email and password are required.'),
-                                  backgroundColor: Colors.redAccent,
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                            },
+                      onPressed:
+                          (canLogin && !isLoading)
+                              ? onSubmit
+                              : () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Both email and password are required.',
+                                    ),
+                                    backgroundColor: Colors.redAccent,
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.primary,
                         foregroundColor: colorScheme.onPrimary,
@@ -416,16 +417,19 @@ class _LoginCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text(
-                              "Login",
-                              style: TextStyle(fontSize: 16),
-                            ),
+                      child:
+                          isLoading
+                              ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Text(
+                                "Login",
+                                style: TextStyle(fontSize: 16),
+                              ),
                     ),
                   ),
                   const SizedBox(height: 12),

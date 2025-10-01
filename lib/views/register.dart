@@ -1,5 +1,6 @@
 import 'package:ecommerce/routes/app_route.dart';
 import 'package:ecommerce/services/auth_api.dart';
+import 'package:ecommerce/utils/api_config.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -7,13 +8,15 @@ class RegisterScreen extends StatefulWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProviderStateMixin {
+class _RegisterScreenState extends State<RegisterScreen>
+    with SingleTickerProviderStateMixin {
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
   bool _emailFocused = false;
@@ -62,7 +65,8 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   Future<void> _submit(BuildContext context) async {
     if (!canRegister) {
       String error = "All fields required and passwords must match.";
-      if (widget.passwordController.text != widget.confirmPasswordController.text) {
+      if (widget.passwordController.text !=
+          widget.confirmPasswordController.text) {
         error = "Passwords do not match.";
       }
       ScaffoldMessenger.of(context).showSnackBar(
@@ -75,8 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     try {
-      const String apiBase = 'https://zentara.duckdns.org/api';
-      final api = AuthApi(baseUrl: apiBase);
+      final api = AuthApi(baseUrl: ApiConfig.baseUrl);
       final name = widget.nameController.text.trim();
       final email = widget.emailController.text.trim();
       final password = widget.passwordController.text;
@@ -87,7 +90,11 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
         passwordConfirmation: widget.confirmPasswordController.text,
       );
       if (!mounted) return;
-      messenger.showSnackBar(const SnackBar(content: Text('Registration successful. Please sign in.')));
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Registration successful. Please sign in.'),
+        ),
+      );
       navigator.pushReplacementNamed(AppRoutes.login);
     } catch (e) {
       if (!mounted) return;
@@ -120,7 +127,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      colorScheme.surfaceContainerHighest.withValues(alpha: isDark ? 0.25 : 0.20),
+                      colorScheme.surfaceContainerHighest.withValues(
+                        alpha: isDark ? 0.25 : 0.20,
+                      ),
                       colorScheme.primary.withValues(alpha: 0.03),
                       colorScheme.surface,
                     ],
@@ -134,109 +143,139 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
           // Responsive Layout
           isWide
               ? Row(
-                  children: [
-                    // Left: Brand / Hero Image panel
-                    Expanded(
-                      flex: 2,
+                children: [
+                  // Left: Brand / Hero Image panel
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest,
+                        image: const DecorationImage(
+                          image: AssetImage(
+                            'assets/images/hero_watchproduct.jpg',
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                       child: Container(
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerHighest,
-                          image: const DecorationImage(
-                            image: AssetImage('assets/images/hero_watchproduct.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: Container(
-                          color: Colors.black.withValues(alpha: 0.38),
-                          child: Center(
-                            child: Text(
-                              'ZENATARA\nLUXURY WATCHES',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.93),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 34,
-                                letterSpacing: 2.5,
-                                height: 1.15,
-                                shadows: [Shadow(color: Colors.black45, blurRadius: 6)],
-                              ),
-                              textAlign: TextAlign.center,
+                        color: Colors.black.withValues(alpha: 0.38),
+                        child: Center(
+                          child: Text(
+                            'ZENATARA\nLUXURY WATCHES',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.93),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 34,
+                              letterSpacing: 2.5,
+                              height: 1.15,
+                              shadows: [
+                                Shadow(color: Colors.black45, blurRadius: 6),
+                              ],
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                      ),
-                    ),
-                    // Right: Register Card
-                    Expanded(
-                      flex: 3,
-                      child: Center(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(horizontal: 42.0, vertical: 34),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 420),
-                            child: _RegisterCard(
-                              fadeController: _fadeController,
-                              nameController: widget.nameController,
-                              emailController: widget.emailController,
-                              passwordController: widget.passwordController,
-                              confirmPasswordController: widget.confirmPasswordController,
-                              obscurePassword: _obscurePassword,
-                              obscureConfirm: _obscureConfirm,
-                              nameFocused: _nameFocused,
-                              emailFocused: _emailFocused,
-                              passwordFocused: _passwordFocused,
-                              confirmFocused: _confirmFocused,
-                              canRegister: canRegister,
-                              isLoading: _isLoading,
-                              onNameFocus: (v) => setState(() => _nameFocused = v),
-                              onEmailFocus: (v) => setState(() => _emailFocused = v),
-                              onPasswordFocus: (v) => setState(() => _passwordFocused = v),
-                              onConfirmFocus: (v) => setState(() => _confirmFocused = v),
-                              onTogglePassword: () => setState(() => _obscurePassword = !_obscurePassword),
-                              onToggleConfirm: () => setState(() => _obscureConfirm = !_obscureConfirm),
-                              onSubmit: () => _submit(context),
-                              onGoToLogin: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : Center(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 420),
-                      child: _RegisterCard(
-                        fadeController: _fadeController,
-                        nameController: widget.nameController,
-                        emailController: widget.emailController,
-                        passwordController: widget.passwordController,
-                        confirmPasswordController: widget.confirmPasswordController,
-                        obscurePassword: _obscurePassword,
-                        obscureConfirm: _obscureConfirm,
-                        nameFocused: _nameFocused,
-                        emailFocused: _emailFocused,
-                        passwordFocused: _passwordFocused,
-                        confirmFocused: _confirmFocused,
-                        canRegister: canRegister,
-                        isLoading: _isLoading,
-                        onNameFocus: (v) => setState(() => _nameFocused = v),
-                        onEmailFocus: (v) => setState(() => _emailFocused = v),
-                        onPasswordFocus: (v) => setState(() => _passwordFocused = v),
-                        onConfirmFocus: (v) => setState(() => _confirmFocused = v),
-                        onTogglePassword: () => setState(() => _obscurePassword = !_obscurePassword),
-                        onToggleConfirm: () => setState(() => _obscureConfirm = !_obscureConfirm),
-                        onSubmit: () => _submit(context),
-                        onGoToLogin: () {
-                          Navigator.pop(context);
-                        },
                       ),
                     ),
                   ),
+                  // Right: Register Card
+                  Expanded(
+                    flex: 3,
+                    child: Center(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 42.0,
+                          vertical: 34,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 420),
+                          child: _RegisterCard(
+                            fadeController: _fadeController,
+                            nameController: widget.nameController,
+                            emailController: widget.emailController,
+                            passwordController: widget.passwordController,
+                            confirmPasswordController:
+                                widget.confirmPasswordController,
+                            obscurePassword: _obscurePassword,
+                            obscureConfirm: _obscureConfirm,
+                            nameFocused: _nameFocused,
+                            emailFocused: _emailFocused,
+                            passwordFocused: _passwordFocused,
+                            confirmFocused: _confirmFocused,
+                            canRegister: canRegister,
+                            isLoading: _isLoading,
+                            onNameFocus:
+                                (v) => setState(() => _nameFocused = v),
+                            onEmailFocus:
+                                (v) => setState(() => _emailFocused = v),
+                            onPasswordFocus:
+                                (v) => setState(() => _passwordFocused = v),
+                            onConfirmFocus:
+                                (v) => setState(() => _confirmFocused = v),
+                            onTogglePassword:
+                                () => setState(
+                                  () => _obscurePassword = !_obscurePassword,
+                                ),
+                            onToggleConfirm:
+                                () => setState(
+                                  () => _obscureConfirm = !_obscureConfirm,
+                                ),
+                            onSubmit: () => _submit(context),
+                            onGoToLogin: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+              : Center(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding,
+                    vertical: 24,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 420),
+                    child: _RegisterCard(
+                      fadeController: _fadeController,
+                      nameController: widget.nameController,
+                      emailController: widget.emailController,
+                      passwordController: widget.passwordController,
+                      confirmPasswordController:
+                          widget.confirmPasswordController,
+                      obscurePassword: _obscurePassword,
+                      obscureConfirm: _obscureConfirm,
+                      nameFocused: _nameFocused,
+                      emailFocused: _emailFocused,
+                      passwordFocused: _passwordFocused,
+                      confirmFocused: _confirmFocused,
+                      canRegister: canRegister,
+                      isLoading: _isLoading,
+                      onNameFocus: (v) => setState(() => _nameFocused = v),
+                      onEmailFocus: (v) => setState(() => _emailFocused = v),
+                      onPasswordFocus:
+                          (v) => setState(() => _passwordFocused = v),
+                      onConfirmFocus:
+                          (v) => setState(() => _confirmFocused = v),
+                      onTogglePassword:
+                          () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
+                      onToggleConfirm:
+                          () => setState(
+                            () => _obscureConfirm = !_obscureConfirm,
+                          ),
+                      onSubmit: () => _submit(context),
+                      onGoToLogin: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
                 ),
+              ),
         ],
       ),
     );
@@ -304,11 +343,18 @@ class _RegisterCard extends StatelessWidget {
             child: Icon(
               Icons.person_add_alt_1,
               size: 80,
-              color: nameFocused || emailFocused || passwordFocused || confirmFocused
-                  ? colorScheme.primary
-                   : colorScheme.primary.withValues(alpha: 0.8),
+              color:
+                  nameFocused ||
+                          emailFocused ||
+                          passwordFocused ||
+                          confirmFocused
+                      ? colorScheme.primary
+                      : colorScheme.primary.withValues(alpha: 0.8),
               shadows: [
-                if (nameFocused || emailFocused || passwordFocused || confirmFocused)
+                if (nameFocused ||
+                    emailFocused ||
+                    passwordFocused ||
+                    confirmFocused)
                   Shadow(
                     color: colorScheme.primary.withValues(alpha: 0.22),
                     blurRadius: 18,
@@ -345,14 +391,22 @@ class _RegisterCard extends StatelessWidget {
                       style: TextStyle(color: colorScheme.onSurface),
                       decoration: InputDecoration(
                         labelText: "Full Name",
-                        labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7)),
-                        prefixIcon: Icon(Icons.person, color: colorScheme.primary),
+                        labelStyle: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.person,
+                          color: colorScheme.primary,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
+                          borderSide: BorderSide(
+                            color: colorScheme.primary,
+                            width: 2.0,
+                          ),
                         ),
                         fillColor: colorScheme.surface,
                         filled: true,
@@ -370,14 +424,22 @@ class _RegisterCard extends StatelessWidget {
                       style: TextStyle(color: colorScheme.onSurface),
                       decoration: InputDecoration(
                         labelText: "Email",
-                        labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7)),
-                        prefixIcon: Icon(Icons.email, color: colorScheme.primary),
+                        labelStyle: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.email,
+                          color: colorScheme.primary,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
+                          borderSide: BorderSide(
+                            color: colorScheme.primary,
+                            width: 2.0,
+                          ),
                         ),
                         fillColor: colorScheme.surface,
                         filled: true,
@@ -395,22 +457,35 @@ class _RegisterCard extends StatelessWidget {
                       style: TextStyle(color: colorScheme.onSurface),
                       decoration: InputDecoration(
                         labelText: "Password",
-                        labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7)),
-                        prefixIcon: Icon(Icons.lock, color: colorScheme.primary),
+                        labelStyle: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.lock,
+                          color: colorScheme.primary,
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            obscurePassword ? Icons.visibility_off : Icons.visibility,
+                            obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: colorScheme.primary,
                           ),
                           onPressed: onTogglePassword,
-                          tooltip: obscurePassword ? "Show password" : "Hide password",
+                          tooltip:
+                              obscurePassword
+                                  ? "Show password"
+                                  : "Hide password",
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
+                          borderSide: BorderSide(
+                            color: colorScheme.primary,
+                            width: 2.0,
+                          ),
                         ),
                         fillColor: colorScheme.surface,
                         filled: true,
@@ -428,22 +503,35 @@ class _RegisterCard extends StatelessWidget {
                       style: TextStyle(color: colorScheme.onSurface),
                       decoration: InputDecoration(
                         labelText: "Confirm Password",
-                        labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7)),
-                        prefixIcon: Icon(Icons.lock_outline, color: colorScheme.primary),
+                        labelStyle: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.lock_outline,
+                          color: colorScheme.primary,
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                            obscureConfirm
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             color: colorScheme.primary,
                           ),
                           onPressed: onToggleConfirm,
-                          tooltip: obscureConfirm ? "Show password" : "Hide password",
+                          tooltip:
+                              obscureConfirm
+                                  ? "Show password"
+                                  : "Hide password",
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: colorScheme.primary, width: 2.0),
+                          borderSide: BorderSide(
+                            color: colorScheme.primary,
+                            width: 2.0,
+                          ),
                         ),
                         fillColor: colorScheme.surface,
                         filled: true,
@@ -465,9 +553,16 @@ class _RegisterCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: isLoading
-                            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                            : const Text(
+                      child:
+                          isLoading
+                              ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : const Text(
                                 "Create Account",
                                 style: TextStyle(fontSize: 16),
                               ),

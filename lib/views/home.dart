@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:ecommerce/routes/app_route.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce/providers/cart_provider.dart';
+import 'package:ecommerce/providers/auth_provider.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
 class Home extends StatefulWidget {
@@ -71,7 +72,8 @@ class _HomeScreenState extends State<Home> {
       final gForce = math.sqrt(gX * gX + gY * gY + gZ * gZ);
       if (gForce > 2.4) {
         final now = DateTime.now();
-        if (_lastShake == null || now.difference(_lastShake!) > const Duration(seconds: 3)) {
+        if (_lastShake == null ||
+            now.difference(_lastShake!) > const Duration(seconds: 3)) {
           _lastShake = now;
           if (mounted) {
             Navigator.pushNamed(context, AppRoutes.scanner);
@@ -81,120 +83,171 @@ class _HomeScreenState extends State<Home> {
     });
   }
 
- @override
-Widget build(BuildContext context) {
-  final colorScheme = Theme.of(context).colorScheme;
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
 
-  return GestureDetector(
-    behavior: HitTestBehavior.translucent,
-    onTap: _onUserInteraction,
-    onPanDown: (_) => _onUserInteraction(),
-    child: PopScope(
-      canPop: _selectedIndex == 0,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop && _selectedIndex > 0) {
-          setState(() {
-            _selectedIndex = 0; // Go to Home tab
-          });
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: colorScheme.surface,
-          elevation: 1,
-          title: Text(
-            "Zentara",
-            style: TextStyle(
-              color: colorScheme.onSurface,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2,
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: _onUserInteraction,
+      onPanDown: (_) => _onUserInteraction(),
+      child: PopScope(
+        canPop: _selectedIndex == 0,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop && _selectedIndex > 0) {
+            setState(() {
+              _selectedIndex = 0; // Go to Home tab
+            });
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: colorScheme.surface,
+            elevation: 1,
+            title: Text(
+              "Zentara",
+              style: TextStyle(
+                color: colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+              ),
             ),
-          ),
-          iconTheme: IconThemeData(color: colorScheme.primary),
-          actions: [
-            // Cart icon with badge
-            Builder(
-              builder: (context) {
-                final cartCount = context.watch<CartProvider>().totalCount;
-                return Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.shopping_cart_outlined),
-                      tooltip: 'Cart',
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const CartScreen()),
-                        );
-                      },
-                    ),
-                    if (cartCount > 0)
-                      Positioned(
-                        right: 8,
-                        top: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            '$cartCount',
-                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black),
+            iconTheme: IconThemeData(color: colorScheme.primary),
+            actions: [
+              // Cart icon with badge
+              Builder(
+                builder: (context) {
+                  final cartCount = context.watch<CartProvider>().totalCount;
+                  return Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.shopping_cart_outlined),
+                        tooltip: 'Cart',
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const CartScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      if (cartCount > 0)
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
                         ),
+                    ],
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.settings),
+                tooltip: 'Settings',
+                onPressed:
+                    () => Navigator.pushNamed(context, AppRoutes.settings),
+              ),
+              Consumer<AuthProvider>(
+                builder: (context, auth, _) {
+                  final name = auth.user?['name']?.toString().trim();
+                  final initials =
+                      (name != null && name.isNotEmpty)
+                          ? name
+                              .split(RegExp(r'\\s+'))
+                              .where((part) => part.isNotEmpty)
+                              .map((part) => part[0].toUpperCase())
+                              .take(2)
+                              .join()
+                          : null;
+                  final avatar = CircleAvatar(
+                    radius: 14,
+                    backgroundColor: colorScheme.primary.withValues(
+                      alpha: 0.18,
+                    ),
+                    child: Text(
+                      (initials != null && initials.isNotEmpty)
+                          ? initials
+                          : 'U',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary,
                       ),
-                  ],
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.settings),
-              tooltip: 'Settings',
-              onPressed: () => Navigator.pushNamed(context, AppRoutes.settings),
-            ),
-          ],
+                    ),
+                  );
+                  return IconButton(
+                    tooltip: 'Profile',
+                    iconSize: 28,
+                    icon:
+                        initials == null
+                            ? const Icon(Icons.person_outline)
+                            : avatar,
+                    onPressed:
+                        () => Navigator.pushNamed(context, AppRoutes.profile),
+                  );
+                },
+              ),
+            ],
+          ),
+          body: _buildPageWithCartHook(_pages[_selectedIndex]),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => Navigator.pushNamed(context, AppRoutes.sensors),
+            tooltip: 'Sensors',
+            backgroundColor: colorScheme.primary,
+            foregroundColor: Colors.black,
+            child: const Icon(Icons.sensors),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          bottomNavigationBar:
+              _showNavBar
+                  ? AnimatedSlide(
+                    duration: const Duration(milliseconds: 350),
+                    offset: Offset(0, 0),
+                    curve: Curves.easeInOut,
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: 1.0,
+                      child: CustomBottomNavBar(
+                        currentIndex: _selectedIndex,
+                        onTap: (index) {
+                          _onUserInteraction();
+                          setState(() => _selectedIndex = index);
+                        },
+                      ),
+                    ),
+                  )
+                  : null,
         ),
-        body: _buildPageWithCartHook(_pages[_selectedIndex]),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.pushNamed(context, AppRoutes.sensors),
-          tooltip: 'Sensors',
-          backgroundColor: colorScheme.primary,
-          foregroundColor: Colors.black,
-          child: const Icon(Icons.sensors),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-        bottomNavigationBar: _showNavBar
-            ? AnimatedSlide(
-                duration: const Duration(milliseconds: 350),
-                offset: Offset(0, 0),
-                curve: Curves.easeInOut,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 300),
-                  opacity: 1.0,
-                  child: CustomBottomNavBar(
-                    currentIndex: _selectedIndex,
-                    onTap: (index) {
-                      _onUserInteraction();
-                      setState(() => _selectedIndex = index);
-                    },
-                  ),
-                ),
-              )
-            : null,
       ),
-    ),
-  );
-}
+    );
+  }
 
   // Injects cart-aware props into ProductScreen when present
   Widget _buildPageWithCartHook(Widget page) {
     if (page is ProductScreen) {
       final cartCount = context.watch<CartProvider>().totalCount;
       return ProductScreen(
-        onCartTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const CartScreen()),
-        ),
+        onCartTap:
+            () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const CartScreen())),
         cartCount: cartCount,
       );
     }

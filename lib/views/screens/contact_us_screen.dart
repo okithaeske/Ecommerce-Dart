@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:ecommerce/utils/api_config.dart';
+
 class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({super.key});
 
@@ -186,8 +188,7 @@ class _ContactFormCardState extends State<ContactFormCard> {
     FocusScope.of(context).unfocus();
     setState(() => _isSubmitting = true);
 
-    const endpoint = 'https://zentara.duckdns.org/api/contact';
-    final uri = Uri.parse(endpoint);
+    final uri = ApiConfig.contactEndpoint();
     final payload = jsonEncode({
       'name': _nameController.text.trim(),
       'email': _emailController.text.trim(),
