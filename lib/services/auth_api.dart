@@ -7,7 +7,7 @@ class AuthApi {
   final http.Client _client;
 
   AuthApi({required this.baseUrl, http.Client? client})
-      : _client = client ?? http.Client();
+    : _client = client ?? http.Client();
 
   Future<Map<String, dynamic>> login({
     required String email,
@@ -15,11 +15,13 @@ class AuthApi {
     String? deviceName,
   }) async {
     final results = await Connectivity().checkConnectivity();
-    final online = results.any((r) =>
-        r == ConnectivityResult.mobile ||
-        r == ConnectivityResult.wifi ||
-        r == ConnectivityResult.ethernet ||
-        r == ConnectivityResult.vpn);
+    final online = results.any(
+      (r) =>
+          r == ConnectivityResult.mobile ||
+          r == ConnectivityResult.wifi ||
+          r == ConnectivityResult.ethernet ||
+          r == ConnectivityResult.vpn,
+    );
     if (!online) {
       throw Exception('No internet connection');
     }
@@ -27,7 +29,8 @@ class AuthApi {
     final payload = {
       'email': email,
       'password': password,
-      if (deviceName != null && deviceName.isNotEmpty) 'device_name': deviceName,
+      if (deviceName != null && deviceName.isNotEmpty)
+        'device_name': deviceName,
     };
     final res = await _client.post(
       uri,
@@ -44,9 +47,10 @@ class AuthApi {
       throw Exception('Unexpected login response');
     }
 
-    final message = (data is Map && data['message'] is String)
-        ? data['message'] as String
-        : 'Login failed (${res.statusCode})';
+    final message =
+        (data is Map && data['message'] is String)
+            ? data['message'] as String
+            : 'Login failed (${res.statusCode})';
     throw Exception(message);
   }
 
@@ -57,11 +61,13 @@ class AuthApi {
     String? passwordConfirmation,
   }) async {
     final results = await Connectivity().checkConnectivity();
-    final online = results.any((r) =>
-        r == ConnectivityResult.mobile ||
-        r == ConnectivityResult.wifi ||
-        r == ConnectivityResult.ethernet ||
-        r == ConnectivityResult.vpn);
+    final online = results.any(
+      (r) =>
+          r == ConnectivityResult.mobile ||
+          r == ConnectivityResult.wifi ||
+          r == ConnectivityResult.ethernet ||
+          r == ConnectivityResult.vpn,
+    );
     if (!online) {
       throw Exception('No internet connection');
     }
@@ -70,7 +76,8 @@ class AuthApi {
       'name': name,
       'email': email,
       'password': password,
-      if (passwordConfirmation != null) 'password_confirmation': passwordConfirmation,
+      if (passwordConfirmation != null)
+        'password_confirmation': passwordConfirmation,
     };
     final res = await _client.post(
       uri,
@@ -85,9 +92,10 @@ class AuthApi {
       if (data is Map<String, dynamic>) return data;
       throw Exception('Unexpected register response');
     }
-    final message = (data is Map && data['message'] is String)
-        ? data['message'] as String
-        : 'Registration failed (${res.statusCode})';
+    final message =
+        (data is Map && data['message'] is String)
+            ? data['message'] as String
+            : 'Registration failed (${res.statusCode})';
     throw Exception(message);
   }
 }

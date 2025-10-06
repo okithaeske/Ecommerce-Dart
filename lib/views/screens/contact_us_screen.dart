@@ -166,17 +166,22 @@ class ContactFormCard extends StatefulWidget {
 
 class _ContactFormCardState extends State<ContactFormCard> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _subjectController = TextEditingController();
   final _messageController = TextEditingController();
 
+  bool _subscribeToNewsletter = false;
   bool _agreed = false;
   bool _isSubmitting = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
+    _subjectController.dispose();
     _messageController.dispose();
     super.dispose();
   }
@@ -190,9 +195,12 @@ class _ContactFormCardState extends State<ContactFormCard> {
 
     final uri = ApiConfig.contactEndpoint();
     final payload = jsonEncode({
-      'name': _nameController.text.trim(),
+      'first_name': _firstNameController.text.trim(),
+      'last_name': _lastNameController.text.trim(),
       'email': _emailController.text.trim(),
+      'subject': _subjectController.text.trim(),
       'message': _messageController.text.trim(),
+      'newsletter': _subscribeToNewsletter,
     });
 
     var errorMessage = '';
@@ -207,10 +215,15 @@ class _ContactFormCardState extends State<ContactFormCard> {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         if (!mounted) return;
         _formKey.currentState!.reset();
-        _nameController.clear();
+        _firstNameController.clear();
+        _lastNameController.clear();
         _emailController.clear();
+        _subjectController.clear();
         _messageController.clear();
-        setState(() => _agreed = false);
+        setState(() {
+          _subscribeToNewsletter = false;
+          _agreed = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Message sent successfully!')),
         );
@@ -258,9 +271,26 @@ class _ContactFormCardState extends State<ContactFormCard> {
     return null;
   }
 
-  String? _validateName(String? value) {
+  String? _validateFirstName(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Please enter your name';
+      return 'Please enter your first name';
+    }
+    return null;
+  }
+
+  String? _validateLastName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your last name';
+    }
+    return null;
+  }
+
+  String? _validateSubject(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter a subject';
+    }
+    if (value.trim().length < 3) {
+      return 'Subject should be at least 3 characters';
     }
     return null;
   }
@@ -320,9 +350,9 @@ class _ContactFormCardState extends State<ContactFormCard> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  controller: _nameController,
+                  controller: _firstNameController,
                   decoration: InputDecoration(
-                    labelText: "Your Name",
+                    labelText: "First Name",
                     labelStyle: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.8),
                     ),
@@ -331,7 +361,22 @@ class _ContactFormCardState extends State<ContactFormCard> {
                     ),
                   ),
                   textInputAction: TextInputAction.next,
-                  validator: _validateName,
+                  validator: _validateFirstName,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _lastNameController,
+                  decoration: InputDecoration(
+                    labelText: "Last Name",
+                    labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.8),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  textInputAction: TextInputAction.next,
+                  validator: _validateLastName,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
@@ -638,3 +683,12 @@ class NewsletterSection extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+
+
+

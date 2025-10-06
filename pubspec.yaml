@@ -53,6 +53,7 @@ dependencies:
   path: ^1.9.0
   share_plus: ^12.0.0
   network_info_plus: ^5.0.3
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -108,8 +109,8 @@ flutter:
     - assets/images/hero_watchContact.jpg
     - assets/images/preview_map.png
     - assets/images/heroabt.jpg
+    - assets/images/app_icon.png
     - assets/lexicon.json
-
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -131,10 +132,14 @@ flutter:
           weight: 600
         - asset: assets/fonts/Montserrat-Bold.ttf
           weight: 700
-          
 
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
-
-
+  
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  adaptive_icon_background: "#000000" # optional, for Android adaptive shape
+  adaptive_icon_foreground: "assets/icon/app_icon.png"
