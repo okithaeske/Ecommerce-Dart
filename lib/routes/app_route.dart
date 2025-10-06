@@ -4,6 +4,7 @@ import 'package:ecommerce/views/register.dart';
 import 'package:ecommerce/views/screens/sensors_screen.dart';
 import 'package:ecommerce/views/screens/scanner_screen.dart';
 import 'package:ecommerce/views/screens/settings_screen.dart';
+import 'package:ecommerce/views/screens/wishlist_screen.dart';
 import 'package:ecommerce/views/screens/profile_screen.dart';
 
 class AppRoutes {
@@ -13,6 +14,7 @@ class AppRoutes {
   static const sensors = '/sensors';
   static const scanner = '/scanner';
   static const settings = '/settings';
+  static const wishlist = '/wishlist';
   static const profile = '/profile';
 
   static final routes = {
@@ -22,6 +24,7 @@ class AppRoutes {
     sensors: (context) => const SensorsScreen(),
     scanner: (context) => const ScannerScreen(),
     settings: (context) => const SettingsScreen(),
+    wishlist: (context) => const WishlistScreen(),
     profile: (context) => const ProfileScreen(),
   };
 }

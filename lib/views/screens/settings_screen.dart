@@ -27,10 +27,18 @@ class SettingsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Battery-based Dark Mode', style: tt.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Battery-based Dark Mode',
+                    style: tt.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   SwitchListTile(
                     value: settings.batteryThemeEnabled,
-                    onChanged: (v) => context.read<SettingsService>().setBatteryThemeEnabled(v),
+                    onChanged:
+                        (v) => context
+                            .read<SettingsService>()
+                            .setBatteryThemeEnabled(v),
                     title: const Text('Enable'),
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -52,9 +60,12 @@ class SettingsScreen extends StatelessWidget {
                           max: 100,
                           divisions: 16,
                           label: '${settings.batteryThemeThreshold}%',
-                          onChanged: settings.batteryThemeEnabled
-                              ? (v) => context.read<SettingsService>().setBatteryThemeThreshold(v.round())
-                              : null,
+                          onChanged:
+                              settings.batteryThemeEnabled
+                                  ? (v) => context
+                                      .read<SettingsService>()
+                                      .setBatteryThemeThreshold(v.round())
+                                  : null,
                         ),
                       ],
                     ),
@@ -71,14 +82,24 @@ class SettingsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Floating Sensors HUD', style: tt.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    'Floating Sensors HUD',
+                    style: tt.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   SwitchListTile(
                     value: settings.sensorsHudEnabled,
-                    onChanged: (v) => context.read<SettingsService>().setSensorsHudEnabled(v),
+                    onChanged:
+                        (v) => context
+                            .read<SettingsService>()
+                            .setSensorsHudEnabled(v),
                     title: const Text('Enable overlay'),
                     contentPadding: EdgeInsets.zero,
                   ),
-                  const Text('Shows draggable accelerometer/gyroscope and battery info on top of screens.'),
+                  const Text(
+                    'Shows draggable accelerometer/gyroscope and battery info on top of screens.',
+                  ),
                 ],
               ),
             ),
@@ -87,14 +108,39 @@ class SettingsScreen extends StatelessWidget {
           Card(
             color: cs.surfaceContainerHighest,
             child: ListTile(
+              leading: Icon(Icons.favorite_outline, color: cs.primary),
+              title: Text(
+                'Wishlist',
+                style: tt.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              subtitle: const Text('Review or share saved products'),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: cs.onSurfaceVariant,
+              ),
+              onTap: () {
+                Navigator.of(context).pushNamed(AppRoutes.wishlist);
+              },
+            ),
+          ),
+          Card(
+            color: cs.surfaceContainerHighest,
+            child: ListTile(
               leading: Icon(Icons.logout, color: cs.error),
               title: Text(
                 'Log out',
                 style: tt.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
-              trailing: Icon(Icons.arrow_forward_ios, size: 16, color: cs.onSurfaceVariant),
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: cs.onSurfaceVariant,
+              ),
               onTap: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
               },
             ),
           ),

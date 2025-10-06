@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce/providers/cart_provider.dart';
+import 'package:ecommerce/providers/wishlist_provider.dart';
 import 'package:ecommerce/models/product.dart';
 import 'package:ecommerce/services/connectivity_service.dart';
 
@@ -21,11 +22,23 @@ class ProductDetailScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final accent = colorScheme.primary;
     final isOnline = context.watch<ConnectivityService>().isOnline;
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final product = Product(
+      id: id,
+      name: name,
+      priceLabel: price,
+      imageUrl: imagePath,
+      description: description,
+    );
+    final wishlist = context.watch<WishlistProvider>();
+    final isWishlisted = wishlist.isWishlisted(product.id);
+    final wishlistLoading = wishlist.isLoading;
 
-    final padding = isLandscape
-        ? const EdgeInsets.symmetric(horizontal: 40, vertical: 24)
-        : const EdgeInsets.all(20);
+    final padding =
+        isLandscape
+            ? const EdgeInsets.symmetric(horizontal: 40, vertical: 24)
+            : const EdgeInsets.all(20);
 
     Widget imageWidget = Center(
       child: Hero(
@@ -40,25 +53,27 @@ class ProductDetailScreen extends StatelessWidget {
                 color: accent.withValues(alpha: 0.07),
                 blurRadius: 13,
                 spreadRadius: 1,
-              )
+              ),
             ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(18),
-            child: imagePath.startsWith('http')
-                ? Image.network(
-                    imagePath,
-                    height: 210,
-                    fit: BoxFit.cover,
-                    errorBuilder: (ctx, err, stack) => Container(
+            child:
+                imagePath.startsWith('http')
+                    ? Image.network(
+                      imagePath,
                       height: 210,
-                      width: 210,
-                      color: Colors.black12,
-                      alignment: Alignment.center,
-                      child: const Icon(Icons.broken_image, size: 48),
-                    ),
-                  )
-                : Image.asset(imagePath, height: 210),
+                      fit: BoxFit.cover,
+                      errorBuilder:
+                          (ctx, err, stack) => Container(
+                            height: 210,
+                            width: 210,
+                            color: Colors.black12,
+                            alignment: Alignment.center,
+                            child: const Icon(Icons.broken_image, size: 48),
+                          ),
+                    )
+                    : Image.asset(imagePath, height: 210),
           ),
         ),
       ),
@@ -73,7 +88,11 @@ class ProductDetailScreen extends StatelessWidget {
             height: 3,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [const Color(0xFFe3c77b), accent, const Color(0xFFe3c77b)],
+                colors: [
+                  const Color(0xFFe3c77b),
+                  accent,
+                  const Color(0xFFe3c77b),
+                ],
               ),
               borderRadius: BorderRadius.circular(8),
             ),
@@ -121,7 +140,9 @@ class ProductDetailScreen extends StatelessWidget {
               backgroundColor: accent,
               foregroundColor: Colors.black,
               padding: const EdgeInsets.symmetric(vertical: 18),
-              textStyle: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              textStyle: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(13),
               ),
@@ -133,17 +154,10 @@ class ProductDetailScreen extends StatelessWidget {
                 );
                 return;
               }
-              final p = Product(
-                id: id,
-                name: name,
-                priceLabel: price,
-                imageUrl: imagePath,
-                description: description,
-              );
-              context.read<CartProvider>().addProduct(p);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Added to cart!')),
-              );
+              context.read<CartProvider>().addProduct(product);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Added to cart!')));
             },
           ),
         ),
@@ -153,52 +167,71 @@ class ProductDetailScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text(
-          name,
-          style: TextStyle(color: colorScheme.onSurface),
-        ),
+        title: Text(name, style: TextStyle(color: colorScheme.onSurface)),
         backgroundColor: colorScheme.surface,
         iconTheme: IconThemeData(color: accent),
         elevation: 1,
         actions: [
-          IconButton(
-            icon: Icon(Icons.favorite_border, color: accent),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Added to wishlist!')),
-              );
-            },
-            tooltip: "Add to Wishlist",
-          ),
+          if (wishlistLoading)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2, color: accent),
+              ),
+            )
+          else
+            IconButton(
+              icon: Icon(
+                isWishlisted ? Icons.favorite : Icons.favorite_border,
+                color: isWishlisted ? accent : accent.withValues(alpha: 0.6),
+              ),
+              onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final added = await context.read<WishlistProvider>().toggle(
+                  product,
+                );
+                final message =
+                    added ? 'Added to wishlist!' : 'Removed from wishlist!';
+                messenger.hideCurrentSnackBar();
+                messenger.showSnackBar(SnackBar(content: Text(message)));
+              },
+              tooltip:
+                  isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist',
+            ),
         ],
       ),
       body: Padding(
         padding: padding,
-        child: isLandscape
-            ? Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Image left
-                  Expanded(child: Align(alignment: Alignment.topCenter, child: imageWidget)),
-                  const SizedBox(width: 36),
-                  // Info right
-                  Expanded(
-                    flex: 2,
-                    child: SizedBox(
-                      height: 370,
-                      child: infoSection,
+        child:
+            isLandscape
+                ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Image left
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: imageWidget,
+                      ),
                     ),
-                  ),
-                ],
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  imageWidget,
-                  const SizedBox(height: 20),
-                  Expanded(child: infoSection),
-                ],
-              ),
+                    const SizedBox(width: 36),
+                    // Info right
+                    Expanded(
+                      flex: 2,
+                      child: SizedBox(height: 370, child: infoSection),
+                    ),
+                  ],
+                )
+                : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    imageWidget,
+                    const SizedBox(height: 20),
+                    Expanded(child: infoSection),
+                  ],
+                ),
       ),
     );
   }

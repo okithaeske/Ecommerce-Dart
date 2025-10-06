@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 // Battery/motion sensors not displayed in this demo page
 
 import 'scanner_screen.dart';
@@ -47,21 +48,67 @@ class _SensorsScreenState extends State<SensorsScreen> {
 
   // (Battery/motion setup removed)
 
-  Future<void> _getLocation() async {
+  Future<bool> _getLocation() async {
     final ok = await PermissionsService.ensureLocation();
     if (!ok) {
       _showSnack('Location permission required');
-      return;
+      return false;
     }
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       _showSnack('Enable Location Services to proceed');
+      return false;
+    }
+    try {
+      final pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best,
+      );
+      if (!mounted) {
+        return false;
+      }
+      setState(() => _position = pos);
+      return true;
+    } catch (_) {
+      _showSnack('Unable to determine current location');
+      return false;
+    }
+  }
+
+  Future<void> _openStoreDirections() async {
+    final origin = _position;
+    final query = <String, String>{
+      'api': '1',
+      'destination': '$_storeLat,$_storeLng',
+      'travelmode': 'driving',
+    };
+    if (origin != null) {
+      query['origin'] = '${origin.latitude},${origin.longitude}';
+    }
+    final uri = Uri.https('www.google.com', '/maps/dir/', query);
+    try {
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched && mounted) {
+        _showSnack('Could not open Google Maps');
+      }
+    } catch (_) {
+      if (mounted) {
+        _showSnack('Could not open Google Maps');
+      }
+    }
+  }
+
+  Future<void> _onLocationTileTap() async {
+    var haveLocation = _position != null;
+    if (!haveLocation) {
+      haveLocation = await _getLocation();
+    }
+    if (!haveLocation) {
       return;
     }
-    final pos = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.best,
-    );
-    setState(() => _position = pos);
+    await _openStoreDirections();
   }
 
   double _distanceMeters(double lat1, double lon1, double lat2, double lon2) {
@@ -150,7 +197,11 @@ class _SensorsScreenState extends State<SensorsScreen> {
             _storeLat,
             _storeLng,
           );
+    final distKm = dist != null ? dist / 1000.0 : null;
     final inStore = dist != null && dist < 150.0; // 150m radius demo
+    final locationSubtitle = _position == null
+        ? 'Tap to locate yourself and open directions'
+        : 'You are ${distKm!.toStringAsFixed(2)} km from store - ${inStore ? 'IN STORE' : 'AWAY'} (tap for directions)';
 
     return Scaffold(
       backgroundColor: cs.surface,
@@ -181,12 +232,10 @@ class _SensorsScreenState extends State<SensorsScreen> {
           children: [
             _Tile(
               title: 'Location / In-Store Mode',
-              subtitle: _position == null
-                  ? 'Tap to get current location'
-                  : 'You are ${dist!.toStringAsFixed(0)}m from store • ${inStore ? 'IN STORE' : 'AWAY'}',
+              subtitle: locationSubtitle,
               icon: Icons.place_outlined,
               color: cs.primary,
-              onTap: _getLocation,
+              onTap: () => _onLocationTileTap(),
             ),
             const SizedBox(height: 12),
             _Tile(
