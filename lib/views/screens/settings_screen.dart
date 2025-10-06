@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ecommerce/routes/app_route.dart';
 import 'package:ecommerce/services/settings_service.dart';
+import 'package:ecommerce/providers/auth_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -137,7 +138,10 @@ class SettingsScreen extends StatelessWidget {
                 size: 16,
                 color: cs.onSurfaceVariant,
               ),
-              onTap: () {
+              onTap: () async {
+                final auth = context.read<AuthProvider>();
+                await auth.clear();
+                if (!context.mounted) return;
                 Navigator.of(
                   context,
                 ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
