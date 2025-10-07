@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'dart:async';
 
 import 'package:ecommerce/services/permissions_service.dart';
@@ -152,46 +152,78 @@ class _SensorsScreenState extends State<SensorsScreen> {
       _showSnack('Microphone permission required');
       return;
     }
-    if (!_listening) {
-      final available = await _speech.initialize(
-        onError: (e) {
-          if (mounted && e.errorMsg.isNotEmpty) {
-            _showSnack(e.errorMsg);
-          }
-        },
-        onStatus: (s) {},
-      );
-      if (!available) {
-        _showSnack('Speech recognition not available');
-        return;
-      }
-      setState(() => _listening = true);
-      String? finalText;
-      await _speech.listen(
-        onResult: (result) {
-          setState(() => _voiceText = result.recognizedWords);
-          if (result.finalResult) {
-            finalText = result.recognizedWords;
-          }
-        },
-        pauseFor: const Duration(seconds: 2),
-        listenOptions: stt.SpeechListenOptions(partialResults: true),
-        localeId: _localeId,
-      );
-      await Future.delayed(const Duration(milliseconds: 400));
+    if (_listening) {
       await _speech.stop();
-      if (mounted) setState(() => _listening = false);
-      final text = (finalText ?? _voiceText)?.trim();
-      if (mounted && text != null && text.isNotEmpty) {
-        _showSnack('Voice: ');
+      if (!mounted) return;
+      setState(() => _listening = false);
+      return;
+    }
+    final available = await _speech.initialize(
+      onError: (e) {
         if (!mounted) return;
-        await Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => SearchResultsScreen(query: text)),
-        );
+        if (e.errorMsg.isNotEmpty) {
+          _showSnack(e.errorMsg);
+        }
+        setState(() => _listening = false);
+      },
+      onStatus: (status) {
+        if (!mounted) return;
+        if (status == 'listening') {
+          setState(() => _listening = true);
+        } else if (status == 'notListening') {
+          setState(() => _listening = false);
+        }
+      },
+    );
+    if (!available) {
+      _showSnack('Speech recognition not available');
+      return;
+    }
+    final started = await _speech.listen(
+      onResult: (result) {
+        if (!mounted) {
+          return;
+        }
+        setState(() => _voiceText = result.recognizedWords);
+        if (result.finalResult) {
+          unawaited(_handleVoiceFinal(result.recognizedWords));
+        }
+      },
+      pauseFor: const Duration(seconds: 2),
+      listenOptions: stt.SpeechListenOptions(partialResults: true),
+      localeId: _localeId,
+    );
+    if (started) {
+      if (mounted && !_listening) {
+        setState(() => _listening = true);
       }
+    } else {
+      if (mounted) {
+        setState(() => _listening = false);
+      }
+      _showSnack('Could not start listening');
     }
   }
-
+  Future<void> _handleVoiceFinal(String rawText) async {
+    final text = rawText.trim();
+    if (text.isEmpty) {
+      return;
+    }
+    if (_speech.isListening) {
+      await _speech.stop();
+    }
+    if (!mounted) {
+      return;
+    }
+    setState(() => _listening = false);
+    _showSnack('Voice: $text');
+    if (!mounted) {
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => SearchResultsScreen(query: text)),
+    );
+  }
   void _showSnack(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
@@ -218,24 +250,8 @@ class _SensorsScreenState extends State<SensorsScreen> {
     return Scaffold(
       backgroundColor: cs.surface,
       appBar: AppBar(
-        title: const Text('Sensors Demo'),
+        title: const Text('Features'),
         backgroundColor: cs.surface,
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.language),
-            onSelected: (value) async {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setString('asr_locale', value);
-              setState(() => _localeId = value);
-            },
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: 'en_US', child: Text('English (US)')),
-              PopupMenuItem(value: 'en_GB', child: Text('English (UK)')),
-              PopupMenuItem(value: 'si_LK', child: Text('Sinhala (LK)')),
-              PopupMenuItem(value: 'hi_IN', child: Text('Hindi (IN)')),
-            ],
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -259,7 +275,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
             ),
             const SizedBox(height: 12),
             _Tile(
-              title: _listening ? 'Listening…' : 'Voice Search',
+              title: _listening ? 'Listening...' : 'Voice Search',
               subtitle: _voiceText == null || _voiceText!.isEmpty
                   ? 'Tap and speak your product'
                   : 'Heard: "$_voiceText"',
@@ -333,4 +349,7 @@ class _Tile extends StatelessWidget {
     );
   }
 }
+
+
+
 
