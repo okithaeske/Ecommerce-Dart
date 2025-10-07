@@ -1,30 +1,47 @@
-
+import 'dart:io' show Platform;
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionsService {
   static Future<bool> ensureLocation() async {
-    final status = await Permission.locationWhenInUse.status;
-    if (status.isGranted) return true;
-    final res = await Permission.locationWhenInUse.request();
-    return res.isGranted;
+    return _requestPermission(Permission.locationWhenInUse);
   }
 
   static Future<bool> ensureCamera() async {
-    final status = await Permission.camera.status;
-    if (status.isGranted) return true;
-    final res = await Permission.camera.request();
-    return res.isGranted;
+    return _requestPermission(Permission.camera);
   }
 
   static Future<bool> ensureMicrophone() async {
-    final status = await Permission.microphone.status;
-    if (status.isGranted) return true;
-    final res = await Permission.microphone.request();
-    return res.isGranted;
+    return _requestPermission(Permission.microphone);
+  }
+
+  static Future<bool> ensureSpeechRecognition() async {
+    if (!Platform.isIOS) {
+      return true;
+    }
+    return _requestPermission(Permission.speech);
   }
 
   static Future<void> openSettings() async {
     await openAppSettings();
   }
-}
 
+  static Future<bool> _requestPermission(Permission permission) async {
+    final initialStatus = await permission.status;
+    if (_isGranted(initialStatus)) {
+      return true;
+    }
+    final result = await permission.request();
+    return _isGranted(result);
+  }
+
+  static bool _isGranted(PermissionStatus status) {
+    switch (status) {
+      case PermissionStatus.granted:
+      case PermissionStatus.limited:
+      case PermissionStatus.provisional:
+        return true;
+      default:
+        return false;
+    }
+  }
+}

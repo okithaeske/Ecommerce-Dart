@@ -142,13 +142,25 @@ class _SensorsScreenState extends State<SensorsScreen> {
   }
 
   Future<void> _voice() async {
+    final speech = await PermissionsService.ensureSpeechRecognition();
+    if (!speech) {
+      _showSnack('Speech recognition permission required');
+      return;
+    }
     final mic = await PermissionsService.ensureMicrophone();
     if (!mic) {
       _showSnack('Microphone permission required');
       return;
     }
     if (!_listening) {
-      final available = await _speech.initialize(onError: (e) {}, onStatus: (s) {});
+      final available = await _speech.initialize(
+        onError: (e) {
+          if (mounted && e.errorMsg.isNotEmpty) {
+            _showSnack(e.errorMsg);
+          }
+        },
+        onStatus: (s) {},
+      );
       if (!available) {
         _showSnack('Speech recognition not available');
         return;
@@ -171,7 +183,7 @@ class _SensorsScreenState extends State<SensorsScreen> {
       if (mounted) setState(() => _listening = false);
       final text = (finalText ?? _voiceText)?.trim();
       if (mounted && text != null && text.isNotEmpty) {
-        _showSnack('Voice: $text');
+        _showSnack('Voice: ');
         if (!mounted) return;
         await Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => SearchResultsScreen(query: text)),
@@ -321,3 +333,4 @@ class _Tile extends StatelessWidget {
     );
   }
 }
+

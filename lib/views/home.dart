@@ -141,12 +141,18 @@ class _HomeScreenState extends State<Home> {
                               horizontal: 6,
                               vertical: 2,
                             ),
+                            constraints: const BoxConstraints(
+                              minWidth: 20,
+                              minHeight: 20,
+                            ),
+                            alignment: Alignment.center,
                             decoration: BoxDecoration(
                               color: colorScheme.primary,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              '',
+                              cartCount > 99 ? '99+' : '$cartCount',
+                              textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
@@ -254,3 +260,4 @@ class _HomeScreenState extends State<Home> {
     return page;
   }
 }
+

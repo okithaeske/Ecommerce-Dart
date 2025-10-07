@@ -248,117 +248,118 @@ class CartScreen extends StatelessWidget {
                         },
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest,
-                        border: Border(
-                          top: BorderSide(color: colorScheme.outlineVariant),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Total',
-                              style: textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            '\$${cart.totalAmount.toStringAsFixed(2)}',
-                            style: textTheme.titleLarge?.copyWith(
-                              color: colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     SafeArea(
                       top: false,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed:
-                                cart.items.isEmpty
-                                    ? null
-                                    : () async {
-                                      final auth = context.read<AuthProvider>();
-                                      if (!auth.isAuthenticated) {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Please sign in to checkout.',
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHighest,
+                          border: Border(
+                            top: BorderSide(color: colorScheme.outlineVariant),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Total',
+                                    style: textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '\$${cart.totalAmount.toStringAsFixed(2)}',
+                                  style: textTheme.titleLarge?.copyWith(
+                                    color: colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton.icon(
+                              onPressed:
+                                  cart.items.isEmpty
+                                      ? null
+                                      : () async {
+                                        final auth = context.read<AuthProvider>();
+                                        if (!auth.isAuthenticated) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Please sign in to checkout.',
+                                              ),
                                             ),
+                                          );
+                                          return;
+                                        }
+                                        final result = await Navigator.of(
+                                          context,
+                                        ).push(
+                                          MaterialPageRoute(
+                                            builder:
+                                                (_) => const CheckoutScreen(),
                                           ),
                                         );
-                                        return;
-                                      }
-                                      final result = await Navigator.of(
-                                        context,
-                                      ).push(
-                                        MaterialPageRoute(
-                                          builder:
-                                              (_) => const CheckoutScreen(),
-                                        ),
-                                      );
-                                      if (!context.mounted) return;
-                                      if (result is Map<String, dynamic>) {
-                                        final message =
-                                            (result['message'] as String?) ??
-                                            'Order placed successfully.';
-                                        final data = result['data'];
-                                        final orderId =
-                                            (data is Map && data['id'] != null)
-                                                ? data['id'].toString()
-                                                : null;
-                                        final status =
-                                            (data is Map &&
-                                                    data['status'] != null)
-                                                ? data['status'].toString()
-                                                : null;
-                                        final details = [
-                                          message,
-                                          if (orderId != null)
-                                            'Order ID: $orderId',
-                                          if (status != null) 'Status: $status',
-                                        ].join('\n');
-                                        await showDialog<void>(
-                                          context: context,
-                                          builder:
-                                              (dialogContext) => AlertDialog(
-                                                title: const Text(
-                                                  'Checkout Complete',
-                                                ),
-                                                content: Text(details),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed:
-                                                        () =>
-                                                            Navigator.of(
-                                                              dialogContext,
-                                                            ).pop(),
-                                                    child: const Text('Close'),
+                                        if (!context.mounted) return;
+                                        if (result is Map<String, dynamic>) {
+                                          final message =
+                                              (result['message'] as String?) ??
+                                              'Order placed successfully.';
+                                          final data = result['data'];
+                                          final orderId =
+                                              (data is Map && data['id'] != null)
+                                                  ? data['id'].toString()
+                                                  : null;
+                                          final status =
+                                              (data is Map &&
+                                                      data['status'] != null)
+                                                  ? data['status'].toString()
+                                                  : null;
+                                          final details = [
+                                            message,
+                                            if (orderId != null)
+                                              'Order ID: $orderId',
+                                            if (status != null) 'Status: $status',
+                                          ].join('\n');
+                                          await showDialog<void>(
+                                            context: context,
+                                            builder:
+                                                (dialogContext) => AlertDialog(
+                                                  title: const Text(
+                                                    'Checkout Complete',
                                                   ),
-                                                ],
-                                              ),
-                                        );
-                                      }
-                                    },
-                            icon: const Icon(Icons.lock_outline),
-                            label: const Text('Proceed to Checkout'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: colorScheme.primary,
-                              foregroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
+                                                  content: Text(details),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed:
+                                                          () =>
+                                                              Navigator.of(
+                                                                dialogContext,
+                                                              ).pop(),
+                                                      child: const Text('Close'),
+                                                    ),
+                                                  ],
+                                                ),
+                                          );
+                                        }
+                                      },
+                              icon: const Icon(Icons.lock_outline),
+                              label: const Text('Proceed to Checkout'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: colorScheme.primary,
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),
@@ -368,3 +369,4 @@ class CartScreen extends StatelessWidget {
     );
   }
 }
+
